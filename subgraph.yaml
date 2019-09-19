@@ -1,0 +1,56 @@
+specVersion: 0.0.1
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: Contract
+    network: mainnet
+    source:
+      address: "0xaf1610D242c7CdD30c546844aF75c147C12e94F9"
+      abi: Contract
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.2
+      language: wasm/assemblyscript
+      entities:
+        - Deposited
+        - SponsorshipDeposited
+        - AdminAdded
+        - AdminRemoved
+        - Withdrawn
+        - Opened
+        - Committed
+        - Rewarded
+        - NextFeeFractionChanged
+        - NextFeeBeneficiaryChanged
+        - Paused
+        - Unpaused
+      abis:
+        - name: Contract
+          file: ./abis/Contract.json
+      eventHandlers:
+        - event: Deposited(indexed address,uint256)
+          handler: handleDeposited
+        - event: SponsorshipDeposited(indexed address,uint256)
+          handler: handleSponsorshipDeposited
+        - event: AdminAdded(indexed address)
+          handler: handleAdminAdded
+        - event: AdminRemoved(indexed address)
+          handler: handleAdminRemoved
+        - event: Withdrawn(indexed address,uint256)
+          handler: handleWithdrawn
+        - event: Opened(indexed uint256,indexed address,bytes32,uint256)
+          handler: handleOpened
+        - event: Committed(indexed uint256)
+          handler: handleCommitted
+        - event: Rewarded(indexed uint256,indexed address,bytes32,uint256,uint256)
+          handler: handleRewarded
+        - event: NextFeeFractionChanged(uint256)
+          handler: handleNextFeeFractionChanged
+        - event: NextFeeBeneficiaryChanged(indexed address)
+          handler: handleNextFeeBeneficiaryChanged
+        - event: Paused(indexed address)
+          handler: handlePaused
+        - event: Unpaused(indexed address)
+          handler: handleUnpaused
+      file: ./src/mapping.ts
