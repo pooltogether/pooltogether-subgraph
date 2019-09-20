@@ -6,9 +6,9 @@
     "build": "graph build",
     "deploy": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ asselstine/pooltogether subgraph.yaml",
     "deploy-rinkeby": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ asselstine/pooltogether-rinkeby subgraph.rinkeby.yaml",
-    "create-local": "graph create --node http://localhost:8020/ asselstine/pooltogether",
-    "remove-local": "graph remove --node http://localhost:8020/ asselstine/pooltogether",
-    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 asselstine/pooltogether"
+    "create-local": "graph create --node http://localhost:8020/ asselstine/pooltogether subgraph.local.yaml",
+    "remove-local": "graph remove --node http://localhost:8020/ asselstine/pooltogether subgraph.local.yaml",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 asselstine/pooltogether subgraph.local.yaml"
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "0.15.0",
