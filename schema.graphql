@@ -16,8 +16,9 @@ type Draw @entity {
   fee: BigInt!
   state: DrawState!
 
-  # Total added by this draw
-  # balance: BigInt!
+  openedAt: BigInt!
+  committedAt: BigInt!
+  rewardedAt: BigInt!
 }
 
 type Player @entity {

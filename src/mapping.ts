@@ -83,6 +83,7 @@ export function handleOpened(event: Opened): void {
   draw.feeBeneficiary = event.params.feeBeneficiary
   draw.secretHash = event.params.secretHash
   draw.feeFraction = event.params.feeFraction
+  draw.openedAt = event.block.timestamp
 
   draw.save()
 }
@@ -90,6 +91,7 @@ export function handleOpened(event: Opened): void {
 export function handleCommitted(event: Committed): void {
   let draw = new Draw(event.params.drawId.toString())
   draw.state = 'Committed'
+  draw.committedAt = event.block.timestamp
   draw.save()
 }
 
@@ -101,6 +103,7 @@ export function handleRewarded(event: Rewarded): void {
   draw.winnings = event.params.winnings
   draw.fee = event.params.fee
   draw.entropy = event.params.entropy
+  draw.rewardedAt = event.block.timestamp
 
   draw.save()
 }

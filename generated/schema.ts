@@ -122,6 +122,33 @@ export class Draw extends Entity {
   set state(value: string) {
     this.set("state", Value.fromString(value));
   }
+
+  get openedAt(): BigInt {
+    let value = this.get("openedAt");
+    return value.toBigInt();
+  }
+
+  set openedAt(value: BigInt) {
+    this.set("openedAt", Value.fromBigInt(value));
+  }
+
+  get committedAt(): BigInt {
+    let value = this.get("committedAt");
+    return value.toBigInt();
+  }
+
+  set committedAt(value: BigInt) {
+    this.set("committedAt", Value.fromBigInt(value));
+  }
+
+  get rewardedAt(): BigInt {
+    let value = this.get("rewardedAt");
+    return value.toBigInt();
+  }
+
+  set rewardedAt(value: BigInt) {
+    this.set("rewardedAt", Value.fromBigInt(value));
+  }
 }
 
 export class Player extends Entity {
