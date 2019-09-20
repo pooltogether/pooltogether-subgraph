@@ -1,6 +1,32 @@
-type ExampleEntity @entity {
+enum DrawState {
+  Open
+  Committed
+  Rewarded
+}
+
+type Draw @entity {
   id: ID!
-  count: BigInt!
-  sender: Bytes! # address
-  amount: BigInt! # uint256
+  drawId: BigInt!
+  feeBeneficiary: Bytes!
+  secretHash: Bytes!
+  feeFraction: BigInt!
+  winner: Bytes!
+  entropy: Bytes!
+  winnings: BigInt!
+  fee: BigInt!
+  state: DrawState!
+
+  # Total added by this draw
+  # balance: BigInt!
+}
+
+type Player @entity {
+  id: ID! 
+  balance: BigInt!
+  sponsorshipBalance: BigInt!
+}
+
+type Admin @entity {
+  id: ID!
+  addedAt: BigInt!
 }

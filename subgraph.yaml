@@ -1,18 +1,19 @@
-specVersion: 0.0.1
+specVersion: 0.0.2
 schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum/contract
-    name: Contract
+    name: PoolTogether
     network: mainnet
     source:
-      address: "0xaf1610D242c7CdD30c546844aF75c147C12e94F9"
-      abi: Contract
+      address: "0xb7896fce748396EcFC240F5a0d3Cc92ca42D7d84"
+      abi: Pool
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.2
+      apiVersion: 0.0.3
       language: wasm/assemblyscript
       entities:
+        - Draw
         - Deposited
         - SponsorshipDeposited
         - AdminAdded
@@ -26,8 +27,8 @@ dataSources:
         - Paused
         - Unpaused
       abis:
-        - name: Contract
-          file: ./abis/Contract.json
+        - name: Pool
+          file: ./abis/Pool.json
       eventHandlers:
         - event: Deposited(indexed address,uint256)
           handler: handleDeposited
