@@ -149,6 +149,32 @@ export class Draw extends Entity {
   set rewardedAt(value: BigInt) {
     this.set("rewardedAt", Value.fromBigInt(value));
   }
+
+  get balance(): BigInt {
+    let value = this.get("balance");
+    return value.toBigInt();
+  }
+
+  set balance(value: BigInt) {
+    this.set("balance", Value.fromBigInt(value));
+  }
+
+  get entries(): Array<string> | null {
+    let value = this.get("entries");
+    if (value === null) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
+  }
+
+  set entries(value: Array<string> | null) {
+    if (value === null) {
+      this.unset("entries");
+    } else {
+      this.set("entries", Value.fromStringArray(value as Array<string>));
+    }
+  }
 }
 
 export class Player extends Entity {
@@ -198,6 +224,23 @@ export class Player extends Entity {
   set sponsorshipBalance(value: BigInt) {
     this.set("sponsorshipBalance", Value.fromBigInt(value));
   }
+
+  get entries(): Array<string> | null {
+    let value = this.get("entries");
+    if (value === null) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
+  }
+
+  set entries(value: Array<string> | null) {
+    if (value === null) {
+      this.unset("entries");
+    } else {
+      this.set("entries", Value.fromStringArray(value as Array<string>));
+    }
+  }
 }
 
 export class Admin extends Entity {
@@ -237,5 +280,81 @@ export class Admin extends Entity {
 
   set addedAt(value: BigInt) {
     this.set("addedAt", Value.fromBigInt(value));
+  }
+}
+
+export class PlayerEntry extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save PlayerEntry entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save PlayerEntry entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("PlayerEntry", id.toString(), this);
+  }
+
+  static load(id: string): PlayerEntry | null {
+    return store.get("PlayerEntry", id) as PlayerEntry | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get drawId(): BigInt {
+    let value = this.get("drawId");
+    return value.toBigInt();
+  }
+
+  set drawId(value: BigInt) {
+    this.set("drawId", Value.fromBigInt(value));
+  }
+
+  get draw(): string {
+    let value = this.get("draw");
+    return value.toString();
+  }
+
+  set draw(value: string) {
+    this.set("draw", Value.fromString(value));
+  }
+
+  get player(): string {
+    let value = this.get("player");
+    return value.toString();
+  }
+
+  set player(value: string) {
+    this.set("player", Value.fromString(value));
+  }
+
+  get balance(): BigInt {
+    let value = this.get("balance");
+    return value.toBigInt();
+  }
+
+  set balance(value: BigInt) {
+    this.set("balance", Value.fromBigInt(value));
+  }
+
+  get sponsorshipBalance(): BigInt {
+    let value = this.get("sponsorshipBalance");
+    return value.toBigInt();
+  }
+
+  set sponsorshipBalance(value: BigInt) {
+    this.set("sponsorshipBalance", Value.fromBigInt(value));
   }
 }

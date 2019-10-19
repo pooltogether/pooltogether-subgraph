@@ -19,15 +19,30 @@ type Draw @entity {
   openedAt: BigInt!
   committedAt: BigInt!
   rewardedAt: BigInt!
+
+  balance: BigInt!
+
+  entries: [PlayerEntry!] @derivedFrom(field: "draw")
 }
 
 type Player @entity {
   id: ID! 
   balance: BigInt!
   sponsorshipBalance: BigInt!
+
+  entries: [PlayerEntry!] @derivedFrom(field: "player")
 }
 
 type Admin @entity {
   id: ID!
   addedAt: BigInt!
+}
+
+type PlayerEntry @entity {
+  id: ID!
+  drawId: BigInt!
+  draw: Draw!
+  player: Player!
+  balance: BigInt!
+  sponsorshipBalance: BigInt!
 }

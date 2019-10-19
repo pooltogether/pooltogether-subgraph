@@ -17,20 +17,55 @@ import {
 } from "../generated/PoolTogether/Pool"
 import { 
   Draw,
+  PlayerEntry,
   Player,
   Admin
 } from '../generated/schema'
+
+const ZERO = BigInt.fromI32(0)
+const ONE = BigInt.fromI32(1)
+
+function formatPlayerEntryId(playerId: string, drawId: BigInt): string {
+  return 'player-' + playerId + '_draw-' + drawId.toString()
+}
+
+function createPlayerEntry(playerId: string, drawId: BigInt): PlayerEntry {
+  const playerEntryId = formatPlayerEntryId(playerId, drawId)
+  const playerEntry = new PlayerEntry(playerEntryId)
+  playerEntry.player = playerId
+  playerEntry.draw = drawId.toString()
+  playerEntry.drawId = drawId
+  return playerEntry
+}
 
 export function handleDeposited(event: Deposited): void {
   let playerId = event.params.sender.toHex()
   let player = Player.load(playerId)
   if (!player) {
     player = new Player(playerId)
-    player.sponsorshipBalance = BigInt.fromI32(0)
+    player.sponsorshipBalance = ZERO
   }
   let pool = Pool.bind(event.address)
   player.balance = pool.balanceOf(event.params.sender)
   player.save()
+
+  const openDrawId = pool.currentOpenDrawId()
+  const openDraw = new Draw(openDrawId.toString())
+  openDraw.balance = pool.openSupply()
+  openDraw.save()
+
+  const playerEntryId = formatPlayerEntryId(playerId, openDrawId)
+  let playerEntry = PlayerEntry.load(playerEntryId)
+  if (!playerEntry) {
+    playerEntry = createPlayerEntry(player.id, openDrawId)
+    playerEntry.balance = player.balance
+    playerEntry.save()
+    player.entries.push(playerEntry.id)
+    player.save()
+  } else {
+    playerEntry.balance = player.balance
+    playerEntry.save()
+  }
 }
 
 export function handleSponsorshipDeposited(event: SponsorshipDeposited): void {
@@ -39,7 +74,7 @@ export function handleSponsorshipDeposited(event: SponsorshipDeposited): void {
   let player = Player.load(playerId)
   if (!player) {
     player = new Player(playerId)
-    player.balance = BigInt.fromI32(0)
+    player.balance = ZERO
   }
   let pool = Pool.bind(event.address)
   let balance = pool.balanceOf(playerAddress)
@@ -54,9 +89,43 @@ export function handleWithdrawn(event: Withdrawn): void {
   let playerAddress = event.params.sender
   let playerId = playerAddress.toHex()
   let player = new Player(playerId)
-  player.balance = BigInt.fromI32(0)
-  player.sponsorshipBalance = BigInt.fromI32(0)
+  player.balance = ZERO
+  player.sponsorshipBalance = ZERO
   player.save()
+
+  let pool = Pool.bind(event.address)
+  const openDrawId = pool.currentOpenDrawId()
+
+  const openPlayerEntryId = formatPlayerEntryId(player.id, openDrawId)
+  let openPlayerEntry = PlayerEntry.load(openPlayerEntryId)
+
+  // if the player does not have an open entry create one
+  if (!openPlayerEntry) {
+    openPlayerEntry = createPlayerEntry(player.id, openDrawId)
+  }
+  openPlayerEntry.balance = ZERO
+  openPlayerEntry.save()
+
+  // update the open draw id balance
+  const openDraw = new Draw(openDrawId.toString())
+  openDraw.balance = pool.openSupply()
+  openDraw.save()
+  
+  const committedDrawId = pool.currentCommittedDrawId()
+  // if there is a committed draw
+  if (!committedDrawId.isZero()) {
+    const committedDraw = new Draw(committedDrawId.toString())
+    committedDraw.balance = pool.committedSupply()
+    committedDraw.save()
+
+    const committedPlayerEntryId = formatPlayerEntryId(player.id, committedDrawId)
+    let committedPlayerEntry = PlayerEntry.load(committedPlayerEntryId)
+    if (!committedPlayerEntry) {
+      committedPlayerEntry = createPlayerEntry(player.id, committedDrawId)
+    }
+    committedPlayerEntry.balance = ZERO
+    committedPlayerEntry.save()
+  }
 }
 
 export function handleAdminAdded(event: AdminAdded): void {
@@ -74,11 +143,12 @@ export function handleAdminRemoved(event: AdminRemoved): void {
 export function handleOpened(event: Opened): void {
   let draw = new Draw(event.params.drawId.toString())
   
+  draw.balance = ZERO
   draw.drawId = event.params.drawId
   draw.winner = new Bytes(32)
   draw.entropy = new Bytes(32)
-  draw.winnings = BigInt.fromI32(0)
-  draw.fee = BigInt.fromI32(0)
+  draw.winnings = ZERO
+  draw.fee = ZERO
   draw.state = 'Open'
   draw.feeBeneficiary = event.params.feeBeneficiary
   draw.secretHash = event.params.secretHash
@@ -89,10 +159,10 @@ export function handleOpened(event: Opened): void {
 }
 
 export function handleCommitted(event: Committed): void {
-  let draw = new Draw(event.params.drawId.toString())
-  draw.state = 'Committed'
-  draw.committedAt = event.block.timestamp
-  draw.save()
+  let openDraw = new Draw(event.params.drawId.toString())
+  openDraw.state = 'Committed'
+  openDraw.committedAt = event.block.timestamp
+  openDraw.save()
 }
 
 export function handleRewarded(event: Rewarded): void {
