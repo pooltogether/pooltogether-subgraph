@@ -49,16 +49,12 @@ function addEntry(draw: Draw | null, playerEntry: PlayerEntry | null): void {
 function removeEntry(draw: Draw | null, playerEntryId: string): void {
   let entryIds = draw.entryIds.slice(0)
   const index = entryIds.indexOf(playerEntryId)
-  log.debug("0000000000000 removing {} at index {}", [playerEntryId, index.toString()])
-  log.debug(">>>>>>>>>>>>>>>>>>>> old entries: {}", [entryIds.join(', ')])
-  const originalLength = entryIds.length
+  // log.debug("0000000000000 removing {} at index {}", [playerEntryId, index.toString()])
+  // log.debug(">>>>>>>>>>>>>>>>>>>> old entries: {}", [entryIds.join(', ')])
+  // const originalLength = entryIds.length
   if (index !== -1) {
     entryIds.splice(index, 1)
   }
-  if (originalLength > entryIds.length) {
-    log.debug("0000000000000 length is shorter!!!!", [])
-  }
-  log.debug(">>>>>>>>>>>>>>>>>>>> new entries: {}", [entryIds.join(', ')])
   draw.entryIds = entryIds
   draw.entries = entryIds.slice(0)
 }
@@ -114,6 +110,7 @@ export function handleSponsorshipDeposited(event: SponsorshipDeposited): void {
 
 export function handleWithdrawn(event: Withdrawn): void {
   let playerAddress = event.params.sender
+  log.debug('handleWithdrawn for tx {}, sender: {}', [event.transaction.hash.toHex(), playerAddress.toHex()])
   let playerId = playerAddress.toHex()
   let player = new Player(playerId)
   player.balance = ZERO
@@ -124,17 +121,20 @@ export function handleWithdrawn(event: Withdrawn): void {
   const openDrawId = pool.currentOpenDrawId()
   const openDraw = Draw.load(openDrawId.toString())
 
-  const openPlayerEntryId = formatPlayerEntryId(player.id, openDrawId)
+  const openPlayerEntryId = formatPlayerEntryId(playerId, openDrawId)
   removeEntry(openDraw, openPlayerEntryId)
   openDraw.save()
   store.remove('PlayerEntry', openPlayerEntryId)
 
   const committedDrawId = pool.currentCommittedDrawId()
-  const committedDraw = Draw.load(committedDrawId.toString())
-  const committedPlayerEntryId = formatPlayerEntryId(player.id, committedDrawId)
-  removeEntry(committedDraw, committedPlayerEntryId)
-  committedDraw.save()
-  store.remove('PlayerEntry', committedPlayerEntryId)
+  const committedPlayerEntryId = formatPlayerEntryId(playerId, committedDrawId)
+  const committedPlayerEntry = PlayerEntry.load(committedPlayerEntryId)
+  if (committedPlayerEntry) {
+    const committedDraw = Draw.load(committedDrawId.toString())
+    removeEntry(committedDraw, committedPlayerEntryId)
+    committedDraw.save()
+    store.remove('PlayerEntry', committedPlayerEntryId)
+  }
 }
 
 export function handleAdminAdded(event: AdminAdded): void {
