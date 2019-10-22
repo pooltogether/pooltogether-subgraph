@@ -49,9 +49,6 @@ function addEntry(draw: Draw | null, playerEntry: PlayerEntry | null): void {
 function removeEntry(draw: Draw | null, playerEntryId: string): void {
   let entryIds = draw.entryIds.slice(0)
   const index = entryIds.indexOf(playerEntryId)
-  // log.debug("0000000000000 removing {} at index {}", [playerEntryId, index.toString()])
-  // log.debug(">>>>>>>>>>>>>>>>>>>> old entries: {}", [entryIds.join(', ')])
-  // const originalLength = entryIds.length
   if (index !== -1) {
     entryIds.splice(index, 1)
   }
@@ -74,7 +71,7 @@ export function handleDeposited(event: Deposited): void {
 
   const openDrawId = pool.currentOpenDrawId()
   const openDraw = Draw.load(openDrawId.toString())
-  openDraw.balance = pool.openSupply()
+  openDraw.balance = pool.committedSupply().plus(pool.openSupply())
   openDraw.save()
 
   const playerEntryId = formatPlayerEntryId(playerId, openDrawId)
@@ -123,6 +120,7 @@ export function handleWithdrawn(event: Withdrawn): void {
 
   const openPlayerEntryId = formatPlayerEntryId(playerId, openDrawId)
   removeEntry(openDraw, openPlayerEntryId)
+  openDraw.balance = pool.committedSupply().plus(pool.openSupply())
   openDraw.save()
   store.remove('PlayerEntry', openPlayerEntryId)
 
@@ -132,6 +130,7 @@ export function handleWithdrawn(event: Withdrawn): void {
   if (committedPlayerEntry) {
     const committedDraw = Draw.load(committedDrawId.toString())
     removeEntry(committedDraw, committedPlayerEntryId)
+    committedDraw.balance = pool.committedSupply()
     committedDraw.save()
     store.remove('PlayerEntry', committedPlayerEntryId)
   }
@@ -152,8 +151,10 @@ export function handleAdminRemoved(event: AdminRemoved): void {
 export function handleOpened(event: Opened): void {
   const drawId = event.params.drawId
   const draw = new Draw(drawId.toString())
-  
-  draw.balance = ZERO
+
+  let pool = Pool.bind(event.address)  
+
+  draw.balance = pool.committedSupply().plus(pool.openSupply())
   draw.drawId = drawId
   draw.winner = new Bytes(32)
   draw.entropy = new Bytes(32)
@@ -169,7 +170,6 @@ export function handleOpened(event: Opened): void {
 
   log.debug("!!!!!!!!!!!!!! Started draw {}", [drawId.toString()])
 
-  let pool = Pool.bind(event.address)
   let committedDrawId = pool.currentCommittedDrawId()
   draw.entryIds = []
   draw.entries = []
@@ -179,9 +179,10 @@ export function handleOpened(event: Opened): void {
     log.debug("!!!!!!!!!!!!!! Found old committed draw {} Found entries {}", [committedDrawId.toString(), entryIds.join(', ')])
     for (let i = 0; i < entryIds.length; i++) {
       let committedPlayerEntry = PlayerEntry.load(entryIds[i])
+      const playerAddress = Address.fromString(committedPlayerEntry.player)
       log.debug("!!!!!!!!!!!!!! Started draw {} Found player {}", [drawId.toString(), committedPlayerEntry.player])
       const openPlayerEntry = createPlayerEntry(committedPlayerEntry.player, drawId)
-      openPlayerEntry.balance = committedPlayerEntry.balance
+      openPlayerEntry.balance = pool.committedBalanceOf(playerAddress).plus(pool.openBalanceOf(playerAddress))
       openPlayerEntry.save()
       addEntry(draw, openPlayerEntry)
     }
