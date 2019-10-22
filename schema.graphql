@@ -10,10 +10,10 @@ type Draw @entity {
   feeBeneficiary: Bytes!
   secretHash: Bytes!
   feeFraction: BigInt!
-  winner: Bytes!
-  entropy: Bytes!
-  winnings: BigInt!
-  fee: BigInt!
+  winner: Bytes
+  entropy: Bytes
+  winnings: BigInt
+  fee: BigInt
   state: DrawState!
 
   openedAt: BigInt!
@@ -22,7 +22,10 @@ type Draw @entity {
 
   balance: BigInt!
 
-  entries: [PlayerEntry!] @derivedFrom(field: "draw")
+  winnerEntry: PlayerEntry
+
+  entryIds: [String!]!
+  entries: [PlayerEntry!]!
 }
 
 type Player @entity {
