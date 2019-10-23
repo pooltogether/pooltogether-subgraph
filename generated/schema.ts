@@ -164,38 +164,22 @@ export class Draw extends Entity {
     this.set("openedAt", Value.fromBigInt(value));
   }
 
-  get committedAt(): BigInt | null {
+  get committedAt(): BigInt {
     let value = this.get("committedAt");
-    if (value === null) {
-      return null;
-    } else {
-      return value.toBigInt();
-    }
+    return value.toBigInt();
   }
 
-  set committedAt(value: BigInt | null) {
-    if (value === null) {
-      this.unset("committedAt");
-    } else {
-      this.set("committedAt", Value.fromBigInt(value as BigInt));
-    }
+  set committedAt(value: BigInt) {
+    this.set("committedAt", Value.fromBigInt(value));
   }
 
-  get rewardedAt(): BigInt | null {
+  get rewardedAt(): BigInt {
     let value = this.get("rewardedAt");
-    if (value === null) {
-      return null;
-    } else {
-      return value.toBigInt();
-    }
+    return value.toBigInt();
   }
 
-  set rewardedAt(value: BigInt | null) {
-    if (value === null) {
-      this.unset("rewardedAt");
-    } else {
-      this.set("rewardedAt", Value.fromBigInt(value as BigInt));
-    }
+  set rewardedAt(value: BigInt) {
+    this.set("rewardedAt", Value.fromBigInt(value));
   }
 
   get balance(): BigInt {

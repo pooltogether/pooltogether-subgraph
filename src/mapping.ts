@@ -40,7 +40,7 @@ function createPlayerEntry(playerId: string, drawId: BigInt): PlayerEntry {
 
 function addEntry(draw: Draw | null, playerEntry: PlayerEntry | null): void {
   const entryIds = draw.entryIds.slice(0)
-  log.debug("------------------ addEntry: entryIds: {}, playerId: {}", [draw.entryIds.join(', '), playerEntry.id.toString()])
+  log.debug("------------------ addEntry: playerId: {}", [playerEntry.id.toString()])
   entryIds.push(playerEntry.id)
   draw.entryIds = entryIds
   draw.entries = entryIds.slice(0)
@@ -165,6 +165,8 @@ export function handleOpened(event: Opened): void {
   draw.secretHash = event.params.secretHash
   draw.feeFraction = event.params.feeFraction
   draw.openedAt = event.block.timestamp
+  draw.committedAt = ZERO
+  draw.rewardedAt = ZERO
 
   draw.save()
 
@@ -176,7 +178,7 @@ export function handleOpened(event: Opened): void {
   if (!committedDrawId.isZero()) {
     const committedDraw = Draw.load(committedDrawId.toString())
     const entryIds = committedDraw.entryIds.slice(0)
-    log.debug("!!!!!!!!!!!!!! Found old committed draw {} Found entries {}", [committedDrawId.toString(), entryIds.join(', ')])
+    log.debug("!!!!!!!!!!!!!! Found old committed draw {}", [committedDrawId.toString()])
     for (let i = 0; i < entryIds.length; i++) {
       let committedPlayerEntry = PlayerEntry.load(entryIds[i])
       const playerAddress = Address.fromString(committedPlayerEntry.player)
