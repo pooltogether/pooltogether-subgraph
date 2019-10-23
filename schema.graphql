@@ -17,8 +17,8 @@ type Draw @entity {
   state: DrawState!
 
   openedAt: BigInt!
-  committedAt: BigInt!
-  rewardedAt: BigInt!
+  committedAt: BigInt
+  rewardedAt: BigInt
 
   balance: BigInt!
 
