@@ -26,6 +26,7 @@ type Draw @entity {
 
   entryIds: [String!]!
   entries: [PlayerEntry!]!
+  entriesCount: BigInt!
 }
 
 type Player @entity {

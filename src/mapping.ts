@@ -44,6 +44,7 @@ function addEntry(draw: Draw | null, playerEntry: PlayerEntry | null): void {
   entryIds.push(playerEntry.id)
   draw.entryIds = entryIds
   draw.entries = entryIds.slice(0)
+  draw.entriesCount = draw.entriesCount.plus(ONE)
 }
 
 function removeEntry(draw: Draw | null, playerEntryId: string): void {
@@ -54,6 +55,7 @@ function removeEntry(draw: Draw | null, playerEntryId: string): void {
   }
   draw.entryIds = entryIds
   draw.entries = entryIds.slice(0)
+  draw.entriesCount = draw.entriesCount.minus(ONE)
 }
 
 export function handleDeposited(event: Deposited): void {
@@ -167,6 +169,7 @@ export function handleOpened(event: Opened): void {
   draw.openedAt = event.block.timestamp
   draw.committedAt = ZERO
   draw.rewardedAt = ZERO
+  draw.entriesCount = ZERO
 
   draw.save()
 

@@ -225,6 +225,15 @@ export class Draw extends Entity {
   set entries(value: Array<string>) {
     this.set("entries", Value.fromStringArray(value));
   }
+
+  get entriesCount(): BigInt {
+    let value = this.get("entriesCount");
+    return value.toBigInt();
+  }
+
+  set entriesCount(value: BigInt) {
+    this.set("entriesCount", Value.fromBigInt(value));
+  }
 }
 
 export class Player extends Entity {
