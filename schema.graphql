@@ -6,21 +6,21 @@ enum DrawState {
 
 type Draw @entity {
   id: ID!
-  drawId: BigInt!
-  feeBeneficiary: Bytes!
-  secretHash: Bytes!
-  feeFraction: BigInt!
-  winner: Bytes!
-  entropy: Bytes!
-  winnings: BigInt!
-  fee: BigInt!
-  state: DrawState!
+  drawId: BigInt
+  feeBeneficiary: Bytes
+  secretHash: Bytes
+  feeFraction: BigInt
+  winner: Bytes
+  entropy: Bytes
+  winnings: BigInt
+  fee: BigInt
+  state: DrawState
 
-  openedAt: BigInt!
-  committedAt: BigInt!
-  rewardedAt: BigInt!
+  openedAt: BigInt
+  committedAt: BigInt
+  rewardedAt: BigInt
 
-  balance: BigInt!
+  balance: BigInt
 
   entries: [PlayerEntry!] @derivedFrom(field: "draw")
 }
@@ -44,5 +44,5 @@ type PlayerEntry @entity {
   draw: Draw!
   player: Player!
   balance: BigInt!
-  sponsorshipBalance: BigInt!
+  sponsorshipBalance: BigInt
 }
