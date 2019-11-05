@@ -78,40 +78,72 @@ export class Draw extends Entity {
     this.set("feeFraction", Value.fromBigInt(value));
   }
 
-  get winner(): Bytes {
+  get winner(): Bytes | null {
     let value = this.get("winner");
-    return value.toBytes();
+    if (value === null) {
+      return null;
+    } else {
+      return value.toBytes();
+    }
   }
 
-  set winner(value: Bytes) {
-    this.set("winner", Value.fromBytes(value));
+  set winner(value: Bytes | null) {
+    if (value === null) {
+      this.unset("winner");
+    } else {
+      this.set("winner", Value.fromBytes(value as Bytes));
+    }
   }
 
-  get entropy(): Bytes {
+  get entropy(): Bytes | null {
     let value = this.get("entropy");
-    return value.toBytes();
+    if (value === null) {
+      return null;
+    } else {
+      return value.toBytes();
+    }
   }
 
-  set entropy(value: Bytes) {
-    this.set("entropy", Value.fromBytes(value));
+  set entropy(value: Bytes | null) {
+    if (value === null) {
+      this.unset("entropy");
+    } else {
+      this.set("entropy", Value.fromBytes(value as Bytes));
+    }
   }
 
-  get winnings(): BigInt {
+  get winnings(): BigInt | null {
     let value = this.get("winnings");
-    return value.toBigInt();
+    if (value === null) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
   }
 
-  set winnings(value: BigInt) {
-    this.set("winnings", Value.fromBigInt(value));
+  set winnings(value: BigInt | null) {
+    if (value === null) {
+      this.unset("winnings");
+    } else {
+      this.set("winnings", Value.fromBigInt(value as BigInt));
+    }
   }
 
-  get fee(): BigInt {
+  get fee(): BigInt | null {
     let value = this.get("fee");
-    return value.toBigInt();
+    if (value === null) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
   }
 
-  set fee(value: BigInt) {
-    this.set("fee", Value.fromBigInt(value));
+  set fee(value: BigInt | null) {
+    if (value === null) {
+      this.unset("fee");
+    } else {
+      this.set("fee", Value.fromBigInt(value as BigInt));
+    }
   }
 
   get state(): string {
@@ -159,21 +191,48 @@ export class Draw extends Entity {
     this.set("balance", Value.fromBigInt(value));
   }
 
-  get entries(): Array<string> | null {
-    let value = this.get("entries");
+  get winnerEntry(): string | null {
+    let value = this.get("winnerEntry");
     if (value === null) {
       return null;
     } else {
-      return value.toStringArray();
+      return value.toString();
     }
   }
 
-  set entries(value: Array<string> | null) {
+  set winnerEntry(value: string | null) {
     if (value === null) {
-      this.unset("entries");
+      this.unset("winnerEntry");
     } else {
-      this.set("entries", Value.fromStringArray(value as Array<string>));
+      this.set("winnerEntry", Value.fromString(value as string));
     }
+  }
+
+  get entryIds(): Array<string> {
+    let value = this.get("entryIds");
+    return value.toStringArray();
+  }
+
+  set entryIds(value: Array<string>) {
+    this.set("entryIds", Value.fromStringArray(value));
+  }
+
+  get entries(): Array<string> {
+    let value = this.get("entries");
+    return value.toStringArray();
+  }
+
+  set entries(value: Array<string>) {
+    this.set("entries", Value.fromStringArray(value));
+  }
+
+  get entriesCount(): BigInt {
+    let value = this.get("entriesCount");
+    return value.toBigInt();
+  }
+
+  set entriesCount(value: BigInt) {
+    this.set("entriesCount", Value.fromBigInt(value));
   }
 }
 

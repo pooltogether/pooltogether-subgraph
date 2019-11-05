@@ -22,7 +22,11 @@ type Draw @entity {
 
   balance: BigInt
 
-  entries: [PlayerEntry!] @derivedFrom(field: "draw")
+  winnerEntry: PlayerEntry
+
+  entryIds: [String!]!
+  entries: [PlayerEntry!]!
+  entriesCount: BigInt!
 }
 
 type Player @entity {
