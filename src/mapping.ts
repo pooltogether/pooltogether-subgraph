@@ -211,12 +211,13 @@ export function handleOpened(event: Opened): void {
   draw.committedAt = ZERO
   draw.rewardedAt = ZERO
   draw.entriesCount = ZERO
-
+  draw.entryIds = []
+  draw.entries = []
+  
   draw.save()
 
   let committedDrawId = pool.currentCommittedDrawId()
-  draw.entryIds = []
-  draw.entries = []
+  
   if (!committedDrawId.isZero()) {
     const committedDraw = Draw.load(committedDrawId.toString())
     const entryIds = committedDraw.entryIds.slice(0)
