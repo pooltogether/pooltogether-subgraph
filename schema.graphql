@@ -6,21 +6,21 @@ enum DrawState {
 
 type Draw @entity {
   id: ID!
-  drawId: BigInt!
-  feeBeneficiary: Bytes!
-  secretHash: Bytes!
-  feeFraction: BigInt!
+  drawId: BigInt
+  feeBeneficiary: Bytes
+  secretHash: Bytes
+  feeFraction: BigInt
   winner: Bytes
   entropy: Bytes
   winnings: BigInt
   fee: BigInt
-  state: DrawState!
+  state: DrawState
 
-  openedAt: BigInt!
-  committedAt: BigInt!
-  rewardedAt: BigInt!
+  openedAt: BigInt
+  committedAt: BigInt
+  rewardedAt: BigInt
 
-  balance: BigInt!
+  balance: BigInt
 
   winnerEntry: PlayerEntry
 
@@ -48,5 +48,5 @@ type PlayerEntry @entity {
   draw: Draw!
   player: Player!
   balance: BigInt!
-  sponsorshipBalance: BigInt!
+  sponsorshipBalance: BigInt
 }

@@ -11,7 +11,7 @@
     "deploy-local": "graph deploy --node http://127.0.0.1:8020 --ipfs http://localhost:5001 asselstine/pooltogether subgraph.local.yaml"
   },
   "dependencies": {
-    "@graphprotocol/graph-cli": "^0.15.0",
-    "@graphprotocol/graph-ts": "^0.15.1"
+    "@graphprotocol/graph-cli": "^0.16.0",
+    "@graphprotocol/graph-ts": "^0.16.0"
   }
 }
