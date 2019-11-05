@@ -51,31 +51,55 @@ export class Draw extends Entity {
     this.set("drawId", Value.fromBigInt(value));
   }
 
-  get feeBeneficiary(): Bytes {
+  get feeBeneficiary(): Bytes | null {
     let value = this.get("feeBeneficiary");
-    return value.toBytes();
+    if (value === null) {
+      return null;
+    } else {
+      return value.toBytes();
+    }
   }
 
-  set feeBeneficiary(value: Bytes) {
-    this.set("feeBeneficiary", Value.fromBytes(value));
+  set feeBeneficiary(value: Bytes | null) {
+    if (value === null) {
+      this.unset("feeBeneficiary");
+    } else {
+      this.set("feeBeneficiary", Value.fromBytes(value as Bytes));
+    }
   }
 
-  get secretHash(): Bytes {
+  get secretHash(): Bytes | null {
     let value = this.get("secretHash");
-    return value.toBytes();
+    if (value === null) {
+      return null;
+    } else {
+      return value.toBytes();
+    }
   }
 
-  set secretHash(value: Bytes) {
-    this.set("secretHash", Value.fromBytes(value));
+  set secretHash(value: Bytes | null) {
+    if (value === null) {
+      this.unset("secretHash");
+    } else {
+      this.set("secretHash", Value.fromBytes(value as Bytes));
+    }
   }
 
-  get feeFraction(): BigInt {
+  get feeFraction(): BigInt | null {
     let value = this.get("feeFraction");
-    return value.toBigInt();
+    if (value === null) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
   }
 
-  set feeFraction(value: BigInt) {
-    this.set("feeFraction", Value.fromBigInt(value));
+  set feeFraction(value: BigInt | null) {
+    if (value === null) {
+      this.unset("feeFraction");
+    } else {
+      this.set("feeFraction", Value.fromBigInt(value as BigInt));
+    }
   }
 
   get winner(): Bytes | null {
@@ -146,49 +170,89 @@ export class Draw extends Entity {
     }
   }
 
-  get state(): string {
+  get state(): string | null {
     let value = this.get("state");
-    return value.toString();
+    if (value === null) {
+      return null;
+    } else {
+      return value.toString();
+    }
   }
 
-  set state(value: string) {
-    this.set("state", Value.fromString(value));
+  set state(value: string | null) {
+    if (value === null) {
+      this.unset("state");
+    } else {
+      this.set("state", Value.fromString(value as string));
+    }
   }
 
-  get openedAt(): BigInt {
+  get openedAt(): BigInt | null {
     let value = this.get("openedAt");
-    return value.toBigInt();
+    if (value === null) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
   }
 
-  set openedAt(value: BigInt) {
-    this.set("openedAt", Value.fromBigInt(value));
+  set openedAt(value: BigInt | null) {
+    if (value === null) {
+      this.unset("openedAt");
+    } else {
+      this.set("openedAt", Value.fromBigInt(value as BigInt));
+    }
   }
 
-  get committedAt(): BigInt {
+  get committedAt(): BigInt | null {
     let value = this.get("committedAt");
-    return value.toBigInt();
+    if (value === null) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
   }
 
-  set committedAt(value: BigInt) {
-    this.set("committedAt", Value.fromBigInt(value));
+  set committedAt(value: BigInt | null) {
+    if (value === null) {
+      this.unset("committedAt");
+    } else {
+      this.set("committedAt", Value.fromBigInt(value as BigInt));
+    }
   }
 
-  get rewardedAt(): BigInt {
+  get rewardedAt(): BigInt | null {
     let value = this.get("rewardedAt");
-    return value.toBigInt();
+    if (value === null) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
   }
 
-  set rewardedAt(value: BigInt) {
-    this.set("rewardedAt", Value.fromBigInt(value));
+  set rewardedAt(value: BigInt | null) {
+    if (value === null) {
+      this.unset("rewardedAt");
+    } else {
+      this.set("rewardedAt", Value.fromBigInt(value as BigInt));
+    }
   }
 
-  get balance(): BigInt {
+  get balance(): BigInt | null {
     let value = this.get("balance");
-    return value.toBigInt();
+    if (value === null) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
   }
 
-  set balance(value: BigInt) {
-    this.set("balance", Value.fromBigInt(value));
+  set balance(value: BigInt | null) {
+    if (value === null) {
+      this.unset("balance");
+    } else {
+      this.set("balance", Value.fromBigInt(value as BigInt));
+    }
   }
 
   get winnerEntry(): string | null {
@@ -408,12 +472,20 @@ export class PlayerEntry extends Entity {
     this.set("balance", Value.fromBigInt(value));
   }
 
-  get sponsorshipBalance(): BigInt {
+  get sponsorshipBalance(): BigInt | null {
     let value = this.get("sponsorshipBalance");
-    return value.toBigInt();
+    if (value === null) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
   }
 
-  set sponsorshipBalance(value: BigInt) {
-    this.set("sponsorshipBalance", Value.fromBigInt(value));
+  set sponsorshipBalance(value: BigInt | null) {
+    if (value === null) {
+      this.unset("sponsorshipBalance");
+    } else {
+      this.set("sponsorshipBalance", Value.fromBigInt(value as BigInt));
+    }
   }
 }

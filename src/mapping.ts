@@ -62,6 +62,7 @@ function removePlayerId(playerId: string, draw: Draw | null): void {
 }
 
 function createPlayerEntry(playerId: string, drawId: BigInt): PlayerEntry {
+  if (drawId === null) { throw new Error('drawId is null') }
   const playerEntryId = formatPlayerEntryId(playerId, drawId)
   const playerEntry = new PlayerEntry(playerEntryId)
   playerEntry.player = playerId

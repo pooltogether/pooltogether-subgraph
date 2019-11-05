@@ -6,7 +6,7 @@ enum DrawState {
 
 type Draw @entity {
   id: ID!
-  drawId: BigInt
+  drawId: BigInt!
   feeBeneficiary: Bytes
   secretHash: Bytes
   feeFraction: BigInt
