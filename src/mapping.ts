@@ -179,7 +179,7 @@ export function handleRewarded(event: Rewarded): void {
 
   const pool = Pool.bind(event.address)
   const committedDrawId = pool.currentCommittedDrawId()
-  const playerEntry = createPlayerEntry(event.params.winner.toString(), committedDrawId)
+  const playerEntry = createPlayerEntry(event.params.winner.toHexString(), committedDrawId)
   playerEntry.balance = pool.committedBalanceOf(event.params.winner)
   playerEntry.save()
 }
