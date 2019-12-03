@@ -6,7 +6,7 @@ dataSources:
     name: PoolTogether
     network: rinkeby
     source:
-      address: "0x289C23B1f53579eb911c7B46D4aB805b1a2E6A29"
+      address: "0x5f221074E6A5c55fD18A8A7F305EA9198f6f9B33"
       abi: Pool
     mapping:
       kind: ethereum/events
