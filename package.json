@@ -4,9 +4,10 @@
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
-    "deploy-sai": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ asselstine/pooltogether subgraph-sai.yaml",
-    "deploy-sai-rinkeby": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ asselstine/pooltogether-rinkeby subgraph-sai.rinkeby.yaml",
+    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ asselstine/pooltogether subgraph.yaml",
+    "deploy-rinkeby": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ asselstine/pooltogether-rinkeby subgraph.rinkeby.yaml",
     "deploy-dai-rinkeby": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ asselstine/pooltogether-dai-rinkeby subgraph-dai.rinkeby.yaml",
+    "deploy-sai-rinkeby": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ asselstine/pooltogether-sai-rinkeby subgraph-sai.rinkeby.yaml",
     "create-local": "graph create --node http://127.0.0.1:8020 asselstine/pooltogether subgraph.local.yaml",
     "remove-local": "graph remove --node http://127.0.0.1:8020 asselstine/pooltogether subgraph.local.yaml",
     "deploy-local": "graph deploy --node http://127.0.0.1:8020 --ipfs http://localhost:5001 asselstine/pooltogether subgraph.local.yaml"
