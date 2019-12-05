@@ -187,6 +187,15 @@ export class Draw extends Entity {
     }
   }
 
+  get poolContract(): string {
+    let value = this.get("poolContract");
+    return value.toString();
+  }
+
+  set poolContract(value: string) {
+    this.set("poolContract", Value.fromString(value));
+  }
+
   get openedAt(): BigInt | null {
     let value = this.get("openedAt");
     if (value === null) {
@@ -487,5 +496,45 @@ export class PlayerEntry extends Entity {
     } else {
       this.set("sponsorshipBalance", Value.fromBigInt(value as BigInt));
     }
+  }
+}
+
+export class PoolContract extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save PoolContract entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save PoolContract entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("PoolContract", id.toString(), this);
+  }
+
+  static load(id: string): PoolContract | null {
+    return store.get("PoolContract", id) as PoolContract | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get draws(): Array<string> {
+    let value = this.get("draws");
+    return value.toStringArray();
+  }
+
+  set draws(value: Array<string>) {
+    this.set("draws", Value.fromStringArray(value));
   }
 }

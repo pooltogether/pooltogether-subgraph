@@ -3,10 +3,63 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum/contract
-    name: PoolTogether
+    name: PoolSai
     network: rinkeby
     source:
-      address: "0xf6535134C89D5e32ccE2C88E7847e207164E754F"
+      address: "0x5f221074E6A5c55fD18A8A7F305EA9198f6f9B33"
+      abi: Pool
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.3
+      language: wasm/assemblyscript
+      entities:
+        - Draw
+        - Deposited
+        - SponsorshipDeposited
+        - AdminAdded
+        - AdminRemoved
+        - Withdrawn
+        - Opened
+        - Committed
+        - Rewarded
+        - NextFeeFractionChanged
+        - NextFeeBeneficiaryChanged
+        - Paused
+        - Unpaused
+      abis:
+        - name: Pool
+          file: ./abis/Pool.json
+      eventHandlers:
+        - event: Deposited(indexed address,uint256)
+          handler: handleDeposited
+        - event: SponsorshipDeposited(indexed address,uint256)
+          handler: handleSponsorshipDeposited
+        - event: AdminAdded(indexed address)
+          handler: handleAdminAdded
+        - event: AdminRemoved(indexed address)
+          handler: handleAdminRemoved
+        - event: Withdrawn(indexed address,uint256)
+          handler: handleWithdrawn
+        - event: Opened(indexed uint256,indexed address,bytes32,uint256)
+          handler: handleOpened
+        - event: Committed(indexed uint256)
+          handler: handleCommitted
+        - event: Rewarded(indexed uint256,indexed address,bytes32,uint256,uint256)
+          handler: handleRewarded
+        - event: NextFeeFractionChanged(uint256)
+          handler: handleNextFeeFractionChanged
+        - event: NextFeeBeneficiaryChanged(indexed address)
+          handler: handleNextFeeBeneficiaryChanged
+        - event: Paused(indexed address)
+          handler: handlePaused
+        - event: Unpaused(indexed address)
+          handler: handleUnpaused
+      file: ./src/mapping.ts
+  - kind: ethereum/contract
+    name: PoolDai
+    network: rinkeby
+    source:
+      address: "0xc496C0710A3638B2066f93D123DF37130b178D78"
       abi: Pool
     mapping:
       kind: ethereum/events

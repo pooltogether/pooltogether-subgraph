@@ -15,6 +15,7 @@ type Draw @entity {
   winnings: BigInt
   fee: BigInt
   state: DrawState
+  poolContract: PoolContract!
 
   openedAt: BigInt
   committedAt: BigInt
@@ -49,4 +50,9 @@ type PlayerEntry @entity {
   player: Player!
   balance: BigInt!
   sponsorshipBalance: BigInt
+}
+
+type PoolContract @entity {
+  id: ID!
+  draws: [Draw!]! @derivedFrom(field: "poolContract")
 }

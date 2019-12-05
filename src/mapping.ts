@@ -15,7 +15,8 @@ import {
   Paused,
   Unpaused
 } from "../generated/PoolTogether/Pool"
-import { 
+import {
+  PoolContract, 
   Draw,
   PlayerEntry,
   Player,
@@ -194,6 +195,13 @@ export function handleAdminRemoved(event: AdminRemoved): void {
 export function handleOpened(event: Opened): void {
   const drawId = event.params.drawId
   const draw = new Draw(drawId.toString())
+  const poolId = event.address.toHex()
+
+  let poolContract = PoolContract.load(poolId)
+  if (!poolContract) {
+    poolContract = new PoolContract(poolId)
+    poolContract.save()
+  }
 
   let pool = Pool.bind(event.address)  
 
@@ -213,7 +221,8 @@ export function handleOpened(event: Opened): void {
   draw.entriesCount = ZERO
   draw.entryIds = []
   draw.entries = []
-  
+  draw.poolContract = poolId
+
   draw.save()
 
   let committedDrawId = pool.currentCommittedDrawId()
@@ -260,27 +269,35 @@ export function handleCommitted(event: Committed): void {
 
 export function handleRewarded(event: Rewarded): void {
   let draw = Draw.load(event.params.drawId.toString())
-  
+
   draw.state = 'Rewarded'
   draw.winner = event.params.winner
 
-  // log.info('handleRewarded: {}', [draw.winner.toHex()])
+  log.info('handleRewarded: {}', [draw.winner.toHex()])
+
   const winnerEntryIndex = findPlayerEntryIndexWithPlayerId(draw.winner.toHex(), draw)
-  // log.info('XX Found winner entry index: {}', [winnerEntryIndex.toString()])
-  const niceArray = draw.entryIds.slice(0)
-  draw.winnerEntry = niceArray[winnerEntryIndex.toI32()]
+
+  if (winnerEntryIndex.toI32() !== -1) {
+    log.info('XX Found winner entry index: {}', [winnerEntryIndex.toString()])
+
+    const niceArray = draw.entryIds.slice(0)
+    draw.winnerEntry = niceArray[winnerEntryIndex.toI32()]
+
+
+    const pool = Pool.bind(event.address)
+    const committedDrawId = pool.currentCommittedDrawId()
+    const playerEntry = createPlayerEntry(event.params.winner.toHexString(), committedDrawId)
+
+    playerEntry.balance = pool.committedBalanceOf(event.params.winner)
+    playerEntry.save()
+  }
+  
   draw.winnings = event.params.winnings
   draw.fee = event.params.fee
   draw.entropy = event.params.entropy
   draw.rewardedAt = event.block.timestamp
 
   draw.save()
-
-  const pool = Pool.bind(event.address)
-  const committedDrawId = pool.currentCommittedDrawId()
-  const playerEntry = createPlayerEntry(event.params.winner.toHexString(), committedDrawId)
-  playerEntry.balance = pool.committedBalanceOf(event.params.winner)
-  playerEntry.save()
 }
 
 export function handleNextFeeFractionChanged(

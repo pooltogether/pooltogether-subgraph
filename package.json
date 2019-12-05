@@ -5,15 +5,13 @@
     "codegen": "graph codegen",
     "build": "graph build",
     "deploy": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ asselstine/pooltogether subgraph.yaml",
-    "deploy-rinkeby": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ asselstine/pooltogether-rinkeby subgraph.rinkeby.yaml",
-    "deploy-dai-rinkeby": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ asselstine/pooltogether-dai-rinkeby subgraph-dai.rinkeby.yaml",
-    "deploy-sai-rinkeby": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ asselstine/pooltogether-sai-rinkeby subgraph-sai.rinkeby.yaml",
+    "deploy-rinkeby": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ pooltogether/pooltogether-v2x-rinkeby subgraph.rinkeby.yaml",
     "create-local": "graph create --node http://127.0.0.1:8020 asselstine/pooltogether subgraph.local.yaml",
     "remove-local": "graph remove --node http://127.0.0.1:8020 asselstine/pooltogether subgraph.local.yaml",
     "deploy-local": "graph deploy --node http://127.0.0.1:8020 --ipfs http://localhost:5001 asselstine/pooltogether subgraph.local.yaml"
   },
   "dependencies": {
-    "@graphprotocol/graph-cli": "^0.16.0",
+    "@graphprotocol/graph-cli": "^0.16.2",
     "@graphprotocol/graph-ts": "^0.16.0"
   }
 }
