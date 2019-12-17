@@ -281,6 +281,23 @@ export class Draw extends Entity {
     }
   }
 
+  get extra(): string | null {
+    let value = this.get("extra");
+    if (value === null) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set extra(value: string | null) {
+    if (value === null) {
+      this.unset("extra");
+    } else {
+      this.set("extra", Value.fromString(value as string));
+    }
+  }
+
   get entryIds(): Array<string> {
     let value = this.get("entryIds");
     return value.toStringArray();
@@ -463,13 +480,21 @@ export class PlayerEntry extends Entity {
     this.set("draw", Value.fromString(value));
   }
 
-  get player(): string {
+  get player(): string | null {
     let value = this.get("player");
-    return value.toString();
+    if (value === null) {
+      return null;
+    } else {
+      return value.toString();
+    }
   }
 
-  set player(value: string) {
-    this.set("player", Value.fromString(value));
+  set player(value: string | null) {
+    if (value === null) {
+      this.unset("player");
+    } else {
+      this.set("player", Value.fromString(value as string));
+    }
   }
 
   get balance(): BigInt {

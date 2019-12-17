@@ -25,6 +25,7 @@ import {
 
 const ZERO = BigInt.fromI32(0)
 const ONE = BigInt.fromI32(1)
+const ZERO_ADDRESS = Address.fromString('0x0000000000000000000000000000000000000000')
 
 function matchPlayerEntryIdPlayer(playerEntryId: string, playerId: string): boolean {
   const start = 'player-' + playerId + '_draw-'
@@ -275,23 +276,27 @@ export function handleRewarded(event: Rewarded): void {
 
   log.info('handleRewarded: {}', [draw.winner.toHex()])
 
-  const winnerEntryIndex = findPlayerEntryIndexWithPlayerId(draw.winner.toHex(), draw)
+  if (draw.winner !== ZERO_ADDRESS) {
+    const winnerEntryIndex = findPlayerEntryIndexWithPlayerId(draw.winner.toHex(), draw)
 
-  if (winnerEntryIndex.toI32() !== -1) {
-    log.info('XX Found winner entry index: {}', [winnerEntryIndex.toString()])
+    log.info('draw.winner.toHex():', [draw.winner.toHexString()])
 
-    const niceArray = draw.entryIds.slice(0)
-    draw.winnerEntry = niceArray[winnerEntryIndex.toI32()]
+    if (winnerEntryIndex.toI32() !== -1) {
+      log.info('XX Found winner entry index: {}', [winnerEntryIndex.toString()])
+
+      const niceArray = draw.entryIds.slice(0)
+      draw.winnerEntry = niceArray[winnerEntryIndex.toI32()]
 
 
-    const pool = Pool.bind(event.address)
-    const committedDrawId = pool.currentCommittedDrawId()
-    const playerEntry = createPlayerEntry(event.params.winner.toHexString(), committedDrawId)
+      const pool = Pool.bind(event.address)
+      const committedDrawId = pool.currentCommittedDrawId()
+      const playerEntry = createPlayerEntry(draw.winner.toHexString(), committedDrawId)
 
-    playerEntry.balance = pool.committedBalanceOf(event.params.winner)
-    playerEntry.save()
+      playerEntry.balance = pool.committedBalanceOf(event.params.winner)
+      playerEntry.save()
+    }
   }
-  
+
   draw.winnings = event.params.winnings
   draw.fee = event.params.fee
   draw.entropy = event.params.entropy

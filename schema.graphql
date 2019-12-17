@@ -47,7 +47,7 @@ type PlayerEntry @entity {
   id: ID!
   drawId: BigInt!
   draw: Draw!
-  player: Player!
+  player: Player
   balance: BigInt!
   sponsorshipBalance: BigInt
 }
