@@ -4,9 +4,9 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: PoolSai
-    network: mainnet
+    network: kovan
     source:
-      address: ""
+      address: "0xF6e245adb2d4758fC180dAB8B212316C8fBA3c02"
       abi: Pool
     mapping:
       kind: ethereum/events
@@ -57,9 +57,9 @@ dataSources:
       file: ./src/mapping.ts
   - kind: ethereum/contract
     name: PoolDai
-    network: mainnet
+    network: kovan
     source:
-      address: ""
+      address: "0x8Db43b4A833815cF535b89d366B5d84D88e43944"
       abi: Pool
     mapping:
       kind: ethereum/events

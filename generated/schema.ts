@@ -281,23 +281,6 @@ export class Draw extends Entity {
     }
   }
 
-  get extra(): string | null {
-    let value = this.get("extra");
-    if (value === null) {
-      return null;
-    } else {
-      return value.toString();
-    }
-  }
-
-  set extra(value: string | null) {
-    if (value === null) {
-      this.unset("extra");
-    } else {
-      this.set("extra", Value.fromString(value as string));
-    }
-  }
-
   get entryIds(): Array<string> {
     let value = this.get("entryIds");
     return value.toStringArray();

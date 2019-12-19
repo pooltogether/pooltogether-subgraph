@@ -6,7 +6,7 @@ dataSources:
     name: PoolSai
     network: rinkeby
     source:
-      address: "0x5f221074E6A5c55fD18A8A7F305EA9198f6f9B33"
+      address: ""
       abi: Pool
     mapping:
       kind: ethereum/events
@@ -59,7 +59,7 @@ dataSources:
     name: PoolDai
     network: rinkeby
     source:
-      address: "0xc496C0710A3638B2066f93D123DF37130b178D78"
+      address: ""
       abi: Pool
     mapping:
       kind: ethereum/events
