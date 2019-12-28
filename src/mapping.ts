@@ -223,8 +223,11 @@ export function handleOpened(event: Opened): void {
   let poolContract = PoolContract.load(poolId)
   if (!poolContract) {
     poolContract = new PoolContract(poolId)
-    poolContract.save()
+    poolContract.drawsCount = ONE
+  } else {
+    poolContract.drawsCount = poolContract.drawsCount.plus(ONE)
   }
+  poolContract.save()
 
   let pool = Pool.bind(event.address)  
 

@@ -55,4 +55,5 @@ type PlayerEntry @entity {
 type PoolContract @entity {
   id: ID!
   draws: [Draw!]! @derivedFrom(field: "poolContract")
+  drawsCount: BigInt
 }

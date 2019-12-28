@@ -545,4 +545,21 @@ export class PoolContract extends Entity {
   set draws(value: Array<string>) {
     this.set("draws", Value.fromStringArray(value));
   }
+
+  get drawsCount(): BigInt | null {
+    let value = this.get("drawsCount");
+    if (value === null) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set drawsCount(value: BigInt | null) {
+    if (value === null) {
+      this.unset("drawsCount");
+    } else {
+      this.set("drawsCount", Value.fromBigInt(value as BigInt));
+    }
+  }
 }
