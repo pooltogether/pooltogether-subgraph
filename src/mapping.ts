@@ -68,7 +68,7 @@ function removePlayerId(playerId: string, draw: Draw | null): void {
   }
 }
 
-function createPlayerEntry(playerId: string, draw: Draw): PlayerEntry {
+function createPlayerEntry(playerId: string, draw: Draw | null): PlayerEntry {
   const playerEntryId = formatPlayerEntryId(playerId, draw.id)
   const playerEntry = new PlayerEntry(playerEntryId)
   playerEntry.player = playerId
