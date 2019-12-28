@@ -33,32 +33,41 @@ function formatUniqueDrawId(contractAddress: string, drawId: BigInt): string {
 }
 
 function matchPlayerEntryIdPlayer(playerEntryId: string, playerId: string): boolean {
-  const start = 'player-' + playerId + '_draw-'
-  // log.info('????????????? checking if {} starts with {} from {}', [playerEntryId, start, playerId])
+  const start = 'player-' + playerId// + '_draw-'
+  log.info('????????????? checking if {} starts with {}', [playerEntryId, start, playerId])
   return playerEntryId.startsWith(start)
 }
 
 function findPlayerEntryIndexWithPlayerId(playerId: string, draw: Draw | null): BigInt {
-  // log.info('+++++++++++ findPlayerEntryIndexWithPlayerId {}', [playerId])
+  log.info('+++++++++++ {}', ["START"])
+  log.info('+++++++++++ findPlayerEntryIndexWithPlayerId {}', [playerId])
+  log.info('+++++++++++ draw.entryIds.length {}', [draw.entriesCount.toString()])
+  log.info('+++++++++++ {}', ["END"])
   const arr = draw.entryIds.slice(0)
   let result = -1;
+
   for (let i = 0; i < arr.length; i++) {
-    if (matchPlayerEntryIdPlayer(arr[i], playerId)) {
+    const isMatch = matchPlayerEntryIdPlayer(arr[i], playerId)
+    if (isMatch) {
       result = i;
     }
   }
-  // log.info('+++++++++++ result is: ', [result.toString()])
+
+  log.info('+++++++++++ result is: ', [result.toString()])
   return BigInt.fromI32(result);
 }
 
-function formatPlayerEntryId(playerId: string, drawId: string): string {
-  return 'player-' + playerId + '_draw-' + drawId.toString()
+function formatPlayerEntryId(playerId: string, uniqueDrawId: string): string {
+  const formattedPlayerEntryId = 'player-' + playerId + '_draw-' + uniqueDrawId.toString()
+  log.info('----- formatPlayerEntryId: {}', [formattedPlayerEntryId])
+  return formattedPlayerEntryId
 }
 
 function removePlayerId(playerId: string, draw: Draw | null): void {
-  // log.info('----- removePlayerId: playerId: {}', [playerId])
+  log.info('----- removePlayerId: playerId: {}', [playerId])
   const oldPlayerEntryIndex = findPlayerEntryIndexWithPlayerId(playerId, draw)
-  // log.info('----- removePlayerId: oldPlayerEntryIndex: {}', [oldPlayerEntryIndex.toString()])
+  log.info('----- removePlayerId: oldPlayerEntryIndex: {}', [oldPlayerEntryIndex.toString()])
+
   if (oldPlayerEntryIndex.gt(BigInt.fromI32(-1))) {
     const entryIds = draw.entryIds.slice(0)
     entryIds.splice(oldPlayerEntryIndex.toI32(), 1)
@@ -68,10 +77,13 @@ function removePlayerId(playerId: string, draw: Draw | null): void {
   }
 }
 
-function createPlayerEntry(playerId: string, drawId: string): PlayerEntry {
-  if (drawId === null) { throw new Error('drawId is null') }
+function createPlayerEntry(playerId: string, uniqueDrawId: string, drawId: string): PlayerEntry {
+  if (uniqueDrawId === null) {
+    log.debug("OOOOOOOOOOOOOOOOO uniqueDrawId is null: {} {}", [playerId.toString(), uniqueDrawId.toString()])
+    throw new Error('uniqueDrawId is null')
+  }
 
-  const playerEntryId = formatPlayerEntryId(playerId, drawId)
+  const playerEntryId = formatPlayerEntryId(playerId, uniqueDrawId)
   const playerEntry = new PlayerEntry(playerEntryId)
 
   playerEntry.player = playerId
@@ -83,7 +95,7 @@ function createPlayerEntry(playerId: string, drawId: string): PlayerEntry {
 
 function addEntry(draw: Draw | null, playerEntry: PlayerEntry | null): void {
   const entryIds = draw.entryIds.slice(0)
-  // log.debug("------------------ addEntry: playerId: {}", [playerEntry.id.toString()])
+  log.debug("------------------ addEntry: adding playerId {} to draw {}", [draw.drawId.toString()])
   entryIds.push(playerEntry.id)
   draw.entryIds = entryIds
   draw.entries = entryIds.slice(0)
@@ -93,6 +105,7 @@ function addEntry(draw: Draw | null, playerEntry: PlayerEntry | null): void {
 function removeEntry(draw: Draw | null, playerEntryId: string): void {
   let entryIds = draw.entryIds.slice(0)
   const index = entryIds.indexOf(playerEntryId)
+
   if (index !== -1) {
     entryIds.splice(index, 1)
     draw.entryIds = entryIds
@@ -135,13 +148,14 @@ export function handleDepositedEvent(playerAddress: Address, poolAddress: Addres
   openDraw.save()
 
   const playerEntryId = formatPlayerEntryId(playerId, uniqueOpenDrawId)
+  log.info('handleDepositedEvent playerEntryId: {}', [playerEntryId])
   let playerEntry = PlayerEntry.load(playerEntryId)
   if (!playerEntry) {
     // remove the old entry, if it exists
-    // log.info('handleDeposited: {} ', [playerId])
+    log.info('handleDepositedEvent: XXXXXXXXXXXXX removing: {}', [playerId])
     removePlayerId(playerId, openDraw)
 
-    playerEntry = createPlayerEntry(player.id, uniqueOpenDrawId)
+    playerEntry = createPlayerEntry(player.id, uniqueOpenDrawId, openDrawId.toString())
     playerEntry.balance = player.balance
     playerEntry.save()
     addEntry(openDraw, playerEntry)
@@ -297,7 +311,7 @@ export function handleCommitted(event: Committed): void {
       committedPlayerEntry.save()
     } else { // we need to remove the old one, if any, and update the balance
       removePlayerId(winnerId, openDraw)
-      const playerEntry = createPlayerEntry(winnerId, uniqueOpenDrawId)
+      const playerEntry = createPlayerEntry(winnerId, uniqueOpenDrawId, openDrawId.toString())
       playerEntry.balance = pool.committedBalanceOf(Address.fromString(winnerId))
       playerEntry.save()
       addEntry(openDraw, playerEntry)
@@ -335,7 +349,8 @@ export function handleRewarded(event: Rewarded): void {
 
       const playerEntry = createPlayerEntry(
         draw.winner.toHex(),
-        uniqueCommittedDrawId
+        uniqueCommittedDrawId,
+        committedDrawId.toString()
       )
 
       playerEntry.balance = pool.committedBalanceOf(event.params.winner)
