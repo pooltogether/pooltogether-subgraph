@@ -117,16 +117,20 @@ function removeEntry(draw: Draw | null, playerEntryId: string): void {
 export function handleDepositedAndCommitted(event: DepositedAndCommitted): void {
   const playerAddress = event.params.sender
   const poolAddress = event.address
-  handleDepositedEvent(playerAddress, poolAddress)
+  const pool = Pool.bind(poolAddress)
+  const committedDrawId = pool.currentCommittedDrawId()
+  handleDepositedEvent(playerAddress, poolAddress, committedDrawId)
 }
 
 export function handleDeposited(event: Deposited): void {
   const playerAddress = event.params.sender
   const poolAddress = event.address
-  handleDepositedEvent(playerAddress, poolAddress)
+  const pool = Pool.bind(poolAddress)
+  const openDrawId = pool.currentOpenDrawId()
+  handleDepositedEvent(playerAddress, poolAddress, openDrawId)
 }
 
-export function handleDepositedEvent(playerAddress: Address, poolAddress: Address): void {
+export function handleDepositedEvent(playerAddress: Address, poolAddress: Address, drawId: BigInt): void {
   let playerId = playerAddress.toHex()
   let player = Player.load(playerId)
 
@@ -138,11 +142,11 @@ export function handleDepositedEvent(playerAddress: Address, poolAddress: Addres
   player.balance = pool.committedBalanceOf(playerAddress).plus(pool.openBalanceOf(playerAddress))
   player.save()
 
-  const openDrawId = pool.currentOpenDrawId()
   const uniqueOpenDrawId = formatUniqueDrawId(
     poolAddress.toHex(),
-    openDrawId
+    drawId
   )
+
   const openDraw = Draw.load(uniqueOpenDrawId)
   openDraw.balance = pool.committedSupply().plus(pool.openSupply())
   openDraw.save()
@@ -155,7 +159,7 @@ export function handleDepositedEvent(playerAddress: Address, poolAddress: Addres
     log.info('handleDepositedEvent: XXXXXXXXXXXXX removing: {}', [playerId])
     removePlayerId(playerId, openDraw)
 
-    playerEntry = createPlayerEntry(player.id, uniqueOpenDrawId, openDrawId.toString())
+    playerEntry = createPlayerEntry(player.id, uniqueOpenDrawId, drawId.toString())
     playerEntry.balance = player.balance
     playerEntry.save()
     addEntry(openDraw, playerEntry)
@@ -245,7 +249,7 @@ export function handleOpened(event: Opened): void {
     poolContract = new PoolContract(poolId)
     poolContract.drawsCount = ONE
   } else {
-    poolContract.drawsCount = poolContract.drawsCount + ONE
+    poolContract.drawsCount = poolContract.drawsCount.plus(ONE)
   } 
   poolContract.save()
 
