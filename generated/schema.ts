@@ -42,13 +42,13 @@ export class Draw extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get drawId(): BigInt {
+  get drawId(): string {
     let value = this.get("drawId");
-    return value.toBigInt();
+    return value.toString();
   }
 
-  set drawId(value: BigInt) {
-    this.set("drawId", Value.fromBigInt(value));
+  set drawId(value: string) {
+    this.set("drawId", Value.fromString(value));
   }
 
   get feeBeneficiary(): Bytes | null {
@@ -445,13 +445,13 @@ export class PlayerEntry extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get drawId(): BigInt {
+  get drawId(): string {
     let value = this.get("drawId");
-    return value.toBigInt();
+    return value.toString();
   }
 
-  set drawId(value: BigInt) {
-    this.set("drawId", Value.fromBigInt(value));
+  set drawId(value: string) {
+    this.set("drawId", Value.fromString(value));
   }
 
   get draw(): string {
@@ -544,5 +544,14 @@ export class PoolContract extends Entity {
 
   set draws(value: Array<string>) {
     this.set("draws", Value.fromStringArray(value));
+  }
+
+  get drawsCount(): BigInt {
+    let value = this.get("drawsCount");
+    return value.toBigInt();
+  }
+
+  set drawsCount(value: BigInt) {
+    this.set("drawsCount", Value.fromBigInt(value));
   }
 }

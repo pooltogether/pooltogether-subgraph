@@ -8,6 +8,7 @@ dataSources:
     source:
       address: "0xb7896fce748396EcFC240F5a0d3Cc92ca42D7d84"
       abi: Pool
+      startBlock: 8480000
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.3
@@ -15,6 +16,7 @@ dataSources:
       entities:
         - Draw
         - Deposited
+        - DepositedAndCommitted
         - SponsorshipDeposited
         - AdminAdded
         - AdminRemoved
@@ -32,6 +34,8 @@ dataSources:
       eventHandlers:
         - event: Deposited(indexed address,uint256)
           handler: handleDeposited
+        - event: DepositedAndCommitted(indexed address,uint256)
+          handler: handleDepositedAndCommitted
         - event: SponsorshipDeposited(indexed address,uint256)
           handler: handleSponsorshipDeposited
         - event: AdminAdded(indexed address)
@@ -61,6 +65,7 @@ dataSources:
     source:
       address: "0x29fe7D60DdF151E5b52e5FAB4f1325da6b2bD958"
       abi: Pool
+      startBlock: 9130000
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.3
@@ -68,6 +73,7 @@ dataSources:
       entities:
         - Draw
         - Deposited
+        - DepositedAndCommitted
         - SponsorshipDeposited
         - AdminAdded
         - AdminRemoved
@@ -85,6 +91,8 @@ dataSources:
       eventHandlers:
         - event: Deposited(indexed address,uint256)
           handler: handleDeposited
+        - event: DepositedAndCommitted(indexed address,uint256)
+          handler: handleDepositedAndCommitted
         - event: SponsorshipDeposited(indexed address,uint256)
           handler: handleSponsorshipDeposited
         - event: AdminAdded(indexed address)

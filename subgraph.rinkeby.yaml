@@ -6,7 +6,7 @@ dataSources:
     name: PoolSai
     network: rinkeby
     source:
-      address: ""
+      address: "0x7f5442a047B95b7E1D8e11df9276756a2185127D"
       abi: Pool
     mapping:
       kind: ethereum/events
@@ -15,6 +15,7 @@ dataSources:
       entities:
         - Draw
         - Deposited
+        - DepositedAndCommitted
         - SponsorshipDeposited
         - AdminAdded
         - AdminRemoved
@@ -32,6 +33,8 @@ dataSources:
       eventHandlers:
         - event: Deposited(indexed address,uint256)
           handler: handleDeposited
+        - event: DepositedAndCommitted(indexed address,uint256)
+          handler: handleDepositedAndCommitted
         - event: SponsorshipDeposited(indexed address,uint256)
           handler: handleSponsorshipDeposited
         - event: AdminAdded(indexed address)
@@ -59,7 +62,7 @@ dataSources:
     name: PoolDai
     network: rinkeby
     source:
-      address: ""
+      address: "0x6012fD40A66b993a28298838Be5C341956B5f7f4"
       abi: Pool
     mapping:
       kind: ethereum/events
@@ -68,6 +71,7 @@ dataSources:
       entities:
         - Draw
         - Deposited
+        - DepositedAndCommitted
         - SponsorshipDeposited
         - AdminAdded
         - AdminRemoved
@@ -85,6 +89,8 @@ dataSources:
       eventHandlers:
         - event: Deposited(indexed address,uint256)
           handler: handleDeposited
+        - event: DepositedAndCommitted(indexed address,uint256)
+          handler: handleDepositedAndCommitted
         - event: SponsorshipDeposited(indexed address,uint256)
           handler: handleSponsorshipDeposited
         - event: AdminAdded(indexed address)

@@ -6,7 +6,8 @@ enum DrawState {
 
 type Draw @entity {
   id: ID!
-  drawId: BigInt!
+  drawId: String!
+  # drawsCount: BigInt!
   feeBeneficiary: Bytes
   secretHash: Bytes
   feeFraction: BigInt
@@ -45,7 +46,7 @@ type Admin @entity {
 
 type PlayerEntry @entity {
   id: ID!
-  drawId: BigInt!
+  drawId: String!
   draw: Draw!
   player: Player
   balance: BigInt!
@@ -55,4 +56,5 @@ type PlayerEntry @entity {
 type PoolContract @entity {
   id: ID!
   draws: [Draw!]! @derivedFrom(field: "poolContract")
+  drawsCount: BigInt!
 }
