@@ -32,8 +32,6 @@ type Draw @entity {
 
 type Player @entity {
   id: ID! 
-  balance: BigInt!
-  sponsorshipBalance: BigInt!
 
   entries: [PlayerEntry!] @derivedFrom(field: "player")
 }
@@ -51,7 +49,7 @@ type PlayerEntry @entity {
   draw: Draw!
   player: Player
   balance: BigInt!
-  sponsorshipBalance: BigInt
+  sponsorshipBalance: BigInt!
 }
 
 type PoolContract @entity {

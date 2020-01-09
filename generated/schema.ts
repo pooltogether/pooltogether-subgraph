@@ -339,24 +339,6 @@ export class Player extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get balance(): BigInt {
-    let value = this.get("balance");
-    return value.toBigInt();
-  }
-
-  set balance(value: BigInt) {
-    this.set("balance", Value.fromBigInt(value));
-  }
-
-  get sponsorshipBalance(): BigInt {
-    let value = this.get("sponsorshipBalance");
-    return value.toBigInt();
-  }
-
-  set sponsorshipBalance(value: BigInt) {
-    this.set("sponsorshipBalance", Value.fromBigInt(value));
-  }
-
   get entries(): Array<string> | null {
     let value = this.get("entries");
     if (value === null) {
@@ -507,21 +489,13 @@ export class PlayerEntry extends Entity {
     this.set("balance", Value.fromBigInt(value));
   }
 
-  get sponsorshipBalance(): BigInt | null {
+  get sponsorshipBalance(): BigInt {
     let value = this.get("sponsorshipBalance");
-    if (value === null) {
-      return null;
-    } else {
-      return value.toBigInt();
-    }
+    return value.toBigInt();
   }
 
-  set sponsorshipBalance(value: BigInt | null) {
-    if (value === null) {
-      this.unset("sponsorshipBalance");
-    } else {
-      this.set("sponsorshipBalance", Value.fromBigInt(value as BigInt));
-    }
+  set sponsorshipBalance(value: BigInt) {
+    this.set("sponsorshipBalance", Value.fromBigInt(value));
   }
 }
 
