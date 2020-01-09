@@ -405,6 +405,15 @@ export class Admin extends Entity {
     this.set("id", Value.fromString(value));
   }
 
+  get address(): Bytes {
+    let value = this.get("address");
+    return value.toBytes();
+  }
+
+  set address(value: Bytes) {
+    this.set("address", Value.fromBytes(value));
+  }
+
   get addedAt(): BigInt {
     let value = this.get("addedAt");
     return value.toBigInt();
@@ -412,6 +421,15 @@ export class Admin extends Entity {
 
   set addedAt(value: BigInt) {
     this.set("addedAt", Value.fromBigInt(value));
+  }
+
+  get poolContract(): string {
+    let value = this.get("poolContract");
+    return value.toString();
+  }
+
+  set poolContract(value: string) {
+    this.set("poolContract", Value.fromString(value));
   }
 }
 
@@ -544,6 +562,15 @@ export class PoolContract extends Entity {
 
   set draws(value: Array<string>) {
     this.set("draws", Value.fromStringArray(value));
+  }
+
+  get admins(): Array<string> {
+    let value = this.get("admins");
+    return value.toStringArray();
+  }
+
+  set admins(value: Array<string>) {
+    this.set("admins", Value.fromStringArray(value));
   }
 
   get drawsCount(): BigInt | null {

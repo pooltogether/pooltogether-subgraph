@@ -34,6 +34,10 @@ function formatDrawEntityId(contractAddress: string, drawId: BigInt): string {
   return contractAddress + '-' + drawId.toString()
 }
 
+function formatAdminEntityId(contractAddress: string, adminId: string): string {
+  return contractAddress + '-' + adminId
+}
+
 function matchPlayerEntryIdPlayer(playerEntryId: string, playerId: string): boolean {
   const start = 'player-' + playerId// + '_draw-'
   // log.warning('????????????? checking if {} starts with {} from {}', [playerEntryId, start, playerId])
@@ -259,14 +263,28 @@ export function handleWithdrawn(event: Withdrawn): void {
 
 export function handleAdminAdded(event: AdminAdded): void {
   let adminId = event.params.admin.toHex()
-  let admin = new Admin(adminId)
+  let poolId = event.address.toHex()
+  let adminEntityId = formatAdminEntityId(poolId, adminId)
+  let admin = new Admin(adminEntityId)
   admin.addedAt = event.block.timestamp
+  admin.address = event.params.admin
+
+  let poolContract = PoolContract.load(poolId)
+  if (!poolContract) {
+    poolContract = new PoolContract(poolId)
+    poolContract.drawsCount = ZERO
+    poolContract.save()
+  }
+
+  admin.poolContract = poolContract.id
   admin.save()
 }
 
 export function handleAdminRemoved(event: AdminRemoved): void {
   let adminId = event.params.admin.toHex()
-  store.remove('Admin', adminId)
+  let poolId = event.address.toHex()
+  let adminEntityId = formatAdminEntityId(poolId, adminId)
+  store.remove('Admin', adminEntityId)
 }
 
 export function handleRewarded(event: Rewarded): void {
