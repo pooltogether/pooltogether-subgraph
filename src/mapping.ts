@@ -134,9 +134,9 @@ export function handleDepositedAndCommitted(event: DepositedAndCommitted): void 
   const pool = Pool.bind(poolAddress)
   const committedDrawId = pool.currentCommittedDrawId()
 
-  if (event.address.equals(KOVAN_POOL_SAI_ADDRESS)) {
+  // if (event.address.equals(KOVAN_POOL_SAI_ADDRESS)) {
     handleDepositedEvent(playerAddress, poolAddress, committedDrawId, amount)
-  }
+  // }
 }
 
 export function handleDeposited(event: Deposited): void {
@@ -146,9 +146,9 @@ export function handleDeposited(event: Deposited): void {
   const pool = Pool.bind(poolAddress)
   const openDrawId = pool.currentOpenDrawId()
 
-  if (event.address.equals(KOVAN_POOL_SAI_ADDRESS)) {
+  // if (event.address.equals(KOVAN_POOL_SAI_ADDRESS)) {
     handleDepositedEvent(playerAddress, poolAddress, openDrawId, amount)
-  }
+  // }
 }
 
 function increasePlayerEntryBalance(draw: Draw | null, playerId: string, amount: BigInt | null): PlayerEntry {
@@ -233,9 +233,9 @@ export function handleSponsorshipDeposited(event: SponsorshipDeposited): void {
 }
 
 export function handleWithdrawn(event: Withdrawn): void {
-  if (event.address.notEqual(KOVAN_POOL_SAI_ADDRESS)) {
-    return
-  }
+  // if (event.address.notEqual(KOVAN_POOL_SAI_ADDRESS)) {
+  //   return
+  // }
 
   const playerAddress = event.params.sender
   const playerId = playerAddress.toHex()
@@ -301,9 +301,9 @@ export function handleAdminRemoved(event: AdminRemoved): void {
 }
 
 export function handleRewarded(event: Rewarded): void {
-  if (event.address.notEqual(KOVAN_POOL_SAI_ADDRESS)) {
-    return
-  }
+  // if (event.address.notEqual(KOVAN_POOL_SAI_ADDRESS)) {
+  //   return
+  // }
 
   const poolId = event.address.toHex()
   const committedDrawId = event.params.drawId
@@ -339,9 +339,9 @@ export function handleRewarded(event: Rewarded): void {
 }
 
 export function handleCommitted(event: Committed): void {
-  if (event.address.notEqual(KOVAN_POOL_SAI_ADDRESS)) {
-    return
-  }
+  // if (event.address.notEqual(KOVAN_POOL_SAI_ADDRESS)) {
+  //   return
+  // }
 
   log.error('+++++++++++ handleCommitted for drawId: {}', [event.params.drawId.toHex()])
 
@@ -355,9 +355,9 @@ export function handleCommitted(event: Committed): void {
 }
 
 export function handleOpened(event: Opened): void {
-  if (event.address.notEqual(KOVAN_POOL_SAI_ADDRESS)) {
-    return
-  }
+  // if (event.address.notEqual(KOVAN_POOL_SAI_ADDRESS)) {
+  //   return
+  // }
 
   log.error('~~~~~~~~~~~~~ handleOpened for drawId: {}', [event.params.drawId.toHex()])
 
