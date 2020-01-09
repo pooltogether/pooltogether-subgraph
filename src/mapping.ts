@@ -41,7 +41,7 @@ function matchPlayerEntryIdPlayer(playerEntryId: string, playerId: string): bool
 }
 
 function findPlayerEntryIndexWithPlayerId(playerId: string, draw: Draw | null): BigInt {
-  log.warning('+++++++++++ findPlayerEntryIndexWithPlayerId {}', [playerId])
+  // log.warning('+++++++++++ findPlayerEntryIndexWithPlayerId {}', [playerId])
   const arr = draw.entryIds.slice(0)
   let result = -1;
 
@@ -61,11 +61,14 @@ function formatPlayerEntryId(playerId: string, drawEntityId: string): string {
   return 'player-' + playerId + '_draw-' + drawEntityId
 }
 
-function removePlayerId(playerId: string, draw: Draw | null): void {
-  log.warning('^^^^^^^^^^^ removePlayerId: playerId: {}', [playerId])
+function removePlayerEntryFromDraw(playerId: string, draw: Draw | null): void {
   const oldPlayerEntryIndex = findPlayerEntryIndexWithPlayerId(playerId, draw)
 
-  log.warning('&&&&&&&&&&& removePlayerId: oldPlayerEntryIndex: {}', [oldPlayerEntryIndex.toString()])
+  log.warning('----------- remove playerId: {}, with oldPlayerEntryIndex: {} from draw: {}', [
+    playerId,
+    oldPlayerEntryIndex.toString(),
+    draw.drawId.toString()
+  ])
 
   if (oldPlayerEntryIndex.gt(BigInt.fromI32(-1))) {
     const entryIds = draw.entryIds.slice(0)
@@ -75,6 +78,7 @@ function removePlayerId(playerId: string, draw: Draw | null): void {
     draw.entries = entryIds
 
     draw.entriesCount = BigInt.fromI32(entryIds.length)
+    log.warning("- new entriesCount: {}", [BigInt.fromI32(entryIds.length).toString()])
   }
 }
 
@@ -92,13 +96,15 @@ function createPlayerEntry(playerId: string, draw: Draw | null): PlayerEntry {
 function addEntry(draw: Draw | null, playerEntry: PlayerEntry | null): void {
   const entryIds = draw.entryIds.slice(0)
 
-  log.warning("$$$$$$$$$$$$$ addEntry: playerId: {}", [playerEntry.id.toString()])
+  log.warning("+++++++++++++ addEntry: playerId: {}", [playerEntry.id.toString()])
 
   entryIds.push(playerEntry.id)
   
   draw.entryIds = entryIds
   draw.entries = entryIds.slice(0)
   draw.entriesCount = BigInt.fromI32(entryIds.length)
+
+  // log.warning("+ new entriesCount: {}", [BigInt.fromI32(entryIds.length).toString()])
 }
 
 function removeEntry(draw: Draw | null, playerEntryId: string): void {
@@ -111,6 +117,7 @@ function removeEntry(draw: Draw | null, playerEntryId: string): void {
     draw.entryIds = entryIds
     draw.entries = entryIds.slice(0)
     draw.entriesCount = BigInt.fromI32(entryIds.length)
+    // log.warning("- new entriesCount: {}", [BigInt.fromI32(entryIds.length).toString()])
   }
 }
 
@@ -141,7 +148,7 @@ export function handleDepositedEvent(playerAddress: Address, poolAddress: Addres
   let playerId = playerAddress.toHex()
   let player = Player.load(playerId)
 
-  log.warning('############## handleDeposited for playerId: {} ', [playerId])
+  log.error('############## handleDeposited for playerId: {}, to drawId: {}', [playerId, drawId.toString()])
 
   if (!player) {
     player = new Player(playerId)
@@ -152,28 +159,28 @@ export function handleDepositedEvent(playerAddress: Address, poolAddress: Addres
   player.balance = pool.committedBalanceOf(playerAddress).plus(pool.openBalanceOf(playerAddress))
   player.save()
 
-  const drawEntityId = formatDrawEntityId(poolId, drawId)
-  const draw = Draw.load(drawEntityId)
+  const openDrawEntityId = formatDrawEntityId(poolId, drawId)
+  const openDraw = Draw.load(openDrawEntityId)
 
-  draw.balance = pool.committedSupply().plus(pool.openSupply())
-  draw.save()
+  openDraw.balance = pool.committedSupply().plus(pool.openSupply())
+  openDraw.save()
 
-  const playerEntryId = formatPlayerEntryId(playerId, drawEntityId)
+  const playerEntryId = formatPlayerEntryId(playerId, openDrawEntityId)
   let playerEntry = PlayerEntry.load(playerEntryId)
 
-  if (!playerEntry) {
-    // remove the old entry, if it exists
-    removePlayerId(playerId, draw)
-
-    playerEntry = createPlayerEntry(player.id, draw)
+  if (playerEntry) {
     playerEntry.balance = player.balance
     playerEntry.save()
-
-    addEntry(draw, playerEntry)
-    draw.save()
   } else {
+    // remove the old entry, if it exists when copied from previous committed draw
+    removePlayerEntryFromDraw(playerId, openDraw)
+
+    playerEntry = createPlayerEntry(player.id, openDraw)
     playerEntry.balance = player.balance
     playerEntry.save()
+
+    addEntry(openDraw, playerEntry)
+    openDraw.save()
   }
 }
 
@@ -206,14 +213,14 @@ export function handleWithdrawn(event: Withdrawn): void {
   const playerId = playerAddress.toHex()
   let player = new Player(playerId)
 
-  log.warning('))))))))))))) handleWithdrawn for tx {}, sender/player: {}', [event.transaction.hash.toHex(), playerId])
-
   const pool = Pool.bind(event.address)
   const poolId = event.address.toHex()
 
   const openDrawId = pool.currentOpenDrawId()
   const openDrawEntityId = formatDrawEntityId(poolId, openDrawId)
   const openDraw = Draw.load(openDrawEntityId)
+
+  log.error('))))))))))))) handleWithdrawn from openDraw {}, sender/player: {}', [openDrawId.toString(), playerId])
 
   const committedDrawId = pool.currentCommittedDrawId()
   const committedDrawEntityId = formatDrawEntityId(poolId, committedDrawId)
@@ -225,7 +232,7 @@ export function handleWithdrawn(event: Withdrawn): void {
 
   const openPlayerEntryId = formatPlayerEntryId(playerId, openDrawEntityId)
   removeEntry(openDraw, openPlayerEntryId)
-  removePlayerId(playerId, openDraw)
+  removePlayerEntryFromDraw(playerId, openDraw)
 
   openDraw.balance = pool.committedSupply().plus(pool.openSupply())
   openDraw.save()
@@ -233,16 +240,18 @@ export function handleWithdrawn(event: Withdrawn): void {
   store.remove('PlayerEntry', openPlayerEntryId)
 
   if (committedDraw) {
-    log.warning('_________ also processing committed draw', [])
-    removePlayerId(playerId, committedDraw)
+    log.warning('_________ also processing committed draw: {}', [committedDrawId.toString()])
+    removePlayerEntryFromDraw(playerId, committedDraw)
 
     const committedPlayerEntryId = formatPlayerEntryId(playerId, committedDrawEntityId)
     const committedPlayerEntry = PlayerEntry.load(committedPlayerEntryId)
 
     if (committedPlayerEntry) {
       removeEntry(committedDraw, committedPlayerEntryId)
+      
       committedDraw.balance = pool.committedSupply()
       committedDraw.save()
+      
       store.remove('PlayerEntry', committedPlayerEntryId)
     }
   }
@@ -260,12 +269,130 @@ export function handleAdminRemoved(event: AdminRemoved): void {
   store.remove('Admin', adminId)
 }
 
-export function handleOpened(event: Opened): void {
-  // log.warning('~~~~~~~~~~~~~ Opened:', [])
-
+export function handleRewarded(event: Rewarded): void {
   if (event.address.notEqual(KOVAN_POOL_SAI_ADDRESS)) {
     return
   }
+
+  const poolId = event.address.toHex()
+  const committedDrawId = event.params.drawId
+
+  const rewardedDraw = Draw.load(
+    formatDrawEntityId(poolId, committedDrawId)
+  )
+
+
+  log.error('@@@@@@@@@@@@ handleRewarded for committedDrawId: {}, and winner: {}', [
+    rewardedDraw.drawId.toString(),
+    // committedDrawId.toHex(),
+    event.params.winner.toHexString()
+  ])
+
+  rewardedDraw.state = 'Rewarded'
+  rewardedDraw.winner = event.params.winner
+
+  rewardedDraw.winnings = event.params.winnings
+  rewardedDraw.fee = event.params.fee
+  rewardedDraw.entropy = event.params.entropy
+  rewardedDraw.rewardedAt = event.block.timestamp
+  
+  rewardedDraw.save()
+
+  processRewardedPlayer(event, rewardedDraw)
+}
+
+function processRewardedPlayer(event: Rewarded, rewardedDraw: Draw | null): void {
+  const pool = Pool.bind(event.address)
+  const rewardedDrawWinnerAddress = Address.fromString(rewardedDraw.winner.toHexString())
+  const winnerId = event.params.winner.toHex()
+  const poolId = event.address.toHex()
+
+  if (rewardedDraw.winner.notEqual(ZERO_ADDRESS)) {
+    log.warning("rewardedDraw.winner IS NOT ZERO ADDRESS!", [rewardedDraw.winner.toHexString()])
+    const openDrawEntityId = formatDrawEntityId(poolId, rewardedDraw.drawId.plus(ONE))
+    const openPlayerEntryId = formatPlayerEntryId(winnerId, openDrawEntityId)
+
+    let openPlayerEntry = PlayerEntry.load(openPlayerEntryId)
+
+    const newPlayerEntryBalance = pool.committedBalanceOf(rewardedDrawWinnerAddress).plus(
+      pool.openBalanceOf(rewardedDrawWinnerAddress)
+    )
+
+    if (openPlayerEntry) { // if they have an active deposit
+      // update the balance to include the winnings
+      openPlayerEntry.balance = newPlayerEntryBalance
+      openPlayerEntry.save()
+
+      rewardedDraw.winnerEntry = openPlayerEntryId
+      rewardedDraw.save()
+    } else { // we need to remove the old one, if any, and update the balance
+      const openDraw = Draw.load(openDrawEntityId)
+      removePlayerEntryFromDraw(winnerId, openDraw)
+
+      const openPlayerEntry = createPlayerEntry(winnerId, openDraw)
+      openPlayerEntry.balance = newPlayerEntryBalance
+      openPlayerEntry.save()
+
+      addEntry(openDraw, openPlayerEntry)
+      openDraw.save()
+      rewardedDraw.winnerEntry = openPlayerEntryId
+      rewardedDraw.save()
+    }
+  }
+}
+
+export function handleCommitted(event: Committed): void {
+  if (event.address.notEqual(KOVAN_POOL_SAI_ADDRESS)) {
+    return
+  }
+
+  log.error('+++++++++++ handleCommitted for drawId: {}', [event.params.drawId.toHex()])
+
+  const poolId = event.address.toHex()
+  const openDrawEntityId = formatDrawEntityId(poolId, event.params.drawId)
+  const openDraw = Draw.load(openDrawEntityId)
+
+  openDraw.state = 'Committed'
+  openDraw.committedAt = event.block.timestamp
+  openDraw.save()
+
+  // const rewardedDrawId = event.params.drawId.minus(ONE)
+  // const rewardedDrawEntityId = formatDrawEntityId(poolId, rewardedDrawId)
+  // const rewardedDraw = Draw.load(rewardedDrawEntityId)
+
+  // if (rewardedDraw) {
+  //   const winnerId = rewardedDraw.winner.toHex()
+
+  //   if (rewardedDraw.winner.notEqual(ZERO_ADDRESS)) {
+  //     const pool = Pool.bind(event.address)
+
+  //     const committedPlayerEntryId = formatPlayerEntryId(winnerId, openDrawEntityId)
+  //     const committedPlayerEntry = PlayerEntry.load(committedPlayerEntryId)
+
+  //     if (committedPlayerEntry) { // if they have an active deposit
+  //       // update the balance to include the winnings
+  //       committedPlayerEntry.balance = pool.committedBalanceOf(Address.fromString(winnerId))
+  //       committedPlayerEntry.save()
+  //     } else { // we need to remove the old one, if any, and update the balance
+  //       removePlayerEntryFromDraw(winnerId, openDraw)
+
+  //       const playerEntry = createPlayerEntry(winnerId, openDraw)
+  //       playerEntry.balance = pool.committedBalanceOf(Address.fromString(winnerId))
+  //       playerEntry.save()
+
+  //       addEntry(openDraw, playerEntry)
+  //       openDraw.save()
+  //     }
+  //   }
+  // }
+}
+
+export function handleOpened(event: Opened): void {
+  if (event.address.notEqual(KOVAN_POOL_SAI_ADDRESS)) {
+    return
+  }
+
+  log.error('~~~~~~~~~~~~~ handleOpened for drawId: {}', [event.params.drawId.toHex()])
 
   const pool = Pool.bind(event.address)
 
@@ -303,106 +430,18 @@ export function handleOpened(event: Opened): void {
   draw.entries = []
   draw.poolContract = poolId
 
-  draw.save()
-
+  // Start clone of previous committed draw's playerEntries to new openDraw
   let committedDrawId = pool.currentCommittedDrawId()
-  
+
   if (!committedDrawId.isZero()) {
     const committedDraw = Draw.load(formatDrawEntityId(poolId, committedDrawId))
     const entryIds = committedDraw.entryIds.slice(0)
+
     draw.entryIds = entryIds
     draw.entries = entryIds
     draw.entriesCount = BigInt.fromI32(entryIds.length)
+    // log.warning("= new open draw has same entries as committed draw: {}", [BigInt.fromI32(entryIds.length).toString()])
   }
-  draw.save()
-}
-
-export function handleCommitted(event: Committed): void {
-  if (event.address.notEqual(KOVAN_POOL_SAI_ADDRESS)) {
-    return
-  }
-
-  log.warning('+++++++++++ handleCommitted for drawId: {}', [event.params.drawId.toHex()])
-
-  const poolId = event.address.toHex()
-  const openDrawEntityId = formatDrawEntityId(poolId, event.params.drawId)
-  const openDraw = Draw.load(openDrawEntityId)
-
-  openDraw.state = 'Committed'
-  openDraw.committedAt = event.block.timestamp
-  openDraw.save()
-
-  const rewardedDrawId = event.params.drawId.minus(ONE)
-  const rewardedDrawEntityId = formatDrawEntityId(poolId, rewardedDrawId)
-  const rewardedDraw = Draw.load(rewardedDrawEntityId)
-
-  if (rewardedDraw) {
-    const winnerId = rewardedDraw.winner.toHex()
-    const pool = Pool.bind(event.address)
-
-    const committedPlayerEntryId = formatPlayerEntryId(winnerId, openDrawEntityId)
-    const committedPlayerEntry = PlayerEntry.load(committedPlayerEntryId)
-    if (committedPlayerEntry) { // if they have an active deposit
-      // update the balance to include the winnings
-      committedPlayerEntry.balance = pool.committedBalanceOf(Address.fromString(winnerId))
-      committedPlayerEntry.save()
-    } else { // we need to remove the old one, if any, and update the balance
-      removePlayerId(winnerId, openDraw)
-
-      const playerEntry = createPlayerEntry(winnerId, openDraw)
-      playerEntry.balance = pool.committedBalanceOf(Address.fromString(winnerId))
-      playerEntry.save()
-      
-      addEntry(openDraw, playerEntry)
-      openDraw.save()
-    }
-  }
-}
-
-export function handleRewarded(event: Rewarded): void {
-  if (event.address.notEqual(KOVAN_POOL_SAI_ADDRESS)) {
-    return
-  }
-
-  let poolId = event.address.toHex()
-  let draw = Draw.load(formatDrawEntityId(poolId, event.params.drawId))
-
-  draw.state = 'Rewarded'
-  draw.winner = event.params.winner
-
-  log.warning('@@@@@@@@@@@@ handleRewarded: {}', [draw.winner.toHex()])
-
-  if (draw.winner.notEqual(ZERO_ADDRESS)) {
-    log.warning('!!!!!!!!!!!!!! in if conditional, so assuming winner is not 0x00!', [])
-
-    const winnerEntryIndex = findPlayerEntryIndexWithPlayerId(draw.winner.toHex(), draw)
-    // log.warning('!!!!!!!!!!!!!! winnerEntryIndex:', [winnerEntryIndex.toString()])
-
-    // Never works:
-    // log.warning('!!!!!!!!!!!!!! draw.winner.toHex():', [draw.winner.toHex()])
-
-    if (winnerEntryIndex.toI32() !== -1) {
-      log.warning('XXXXXXXXXXXXXXX Found winner entry index: {}', [winnerEntryIndex.toString()])
-
-      const niceArray = draw.entryIds.slice(0)
-      draw.winnerEntry = niceArray[winnerEntryIndex.toI32()]
-
-      const pool = Pool.bind(event.address)
-      const committedDrawId = pool.currentCommittedDrawId()
-      const committedDraw = Draw.load(formatDrawEntityId(event.address.toHex(), committedDrawId))
-
-      // TODO: Why are we creating a new player entry here instead of updating the existing one?
-      const playerEntry = createPlayerEntry(draw.winner.toHex(), committedDraw)
-
-      playerEntry.balance = pool.committedBalanceOf(event.params.winner)
-      playerEntry.save()
-    }
-  }
-
-  draw.winnings = event.params.winnings
-  draw.fee = event.params.fee
-  draw.entropy = event.params.entropy
-  draw.rewardedAt = event.block.timestamp
 
   draw.save()
 }
