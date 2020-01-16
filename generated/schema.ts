@@ -196,55 +196,58 @@ export class Draw extends Entity {
     this.set("poolContract", Value.fromString(value));
   }
 
-  get openedAt(): BigInt | null {
+  get openedAt(): BigInt {
     let value = this.get("openedAt");
-    if (value === null) {
-      return null;
-    } else {
-      return value.toBigInt();
-    }
+    return value.toBigInt();
   }
 
-  set openedAt(value: BigInt | null) {
-    if (value === null) {
-      this.unset("openedAt");
-    } else {
-      this.set("openedAt", Value.fromBigInt(value as BigInt));
-    }
+  set openedAt(value: BigInt) {
+    this.set("openedAt", Value.fromBigInt(value));
   }
 
-  get committedAt(): BigInt | null {
+  get committedAt(): BigInt {
     let value = this.get("committedAt");
-    if (value === null) {
-      return null;
-    } else {
-      return value.toBigInt();
-    }
+    return value.toBigInt();
   }
 
-  set committedAt(value: BigInt | null) {
-    if (value === null) {
-      this.unset("committedAt");
-    } else {
-      this.set("committedAt", Value.fromBigInt(value as BigInt));
-    }
+  set committedAt(value: BigInt) {
+    this.set("committedAt", Value.fromBigInt(value));
   }
 
-  get rewardedAt(): BigInt | null {
+  get rewardedAt(): BigInt {
     let value = this.get("rewardedAt");
-    if (value === null) {
-      return null;
-    } else {
-      return value.toBigInt();
-    }
+    return value.toBigInt();
   }
 
-  set rewardedAt(value: BigInt | null) {
-    if (value === null) {
-      this.unset("rewardedAt");
-    } else {
-      this.set("rewardedAt", Value.fromBigInt(value as BigInt));
-    }
+  set rewardedAt(value: BigInt) {
+    this.set("rewardedAt", Value.fromBigInt(value));
+  }
+
+  get openedAtBlock(): BigInt {
+    let value = this.get("openedAtBlock");
+    return value.toBigInt();
+  }
+
+  set openedAtBlock(value: BigInt) {
+    this.set("openedAtBlock", Value.fromBigInt(value));
+  }
+
+  get committedAtBlock(): BigInt {
+    let value = this.get("committedAtBlock");
+    return value.toBigInt();
+  }
+
+  set committedAtBlock(value: BigInt) {
+    this.set("committedAtBlock", Value.fromBigInt(value));
+  }
+
+  get rewardedAtBlock(): BigInt {
+    let value = this.get("rewardedAtBlock");
+    return value.toBigInt();
+  }
+
+  set rewardedAtBlock(value: BigInt) {
+    this.set("rewardedAtBlock", Value.fromBigInt(value));
   }
 
   get balance(): BigInt | null {
@@ -264,48 +267,13 @@ export class Draw extends Entity {
     }
   }
 
-  get winnerEntry(): string | null {
-    let value = this.get("winnerEntry");
-    if (value === null) {
-      return null;
-    } else {
-      return value.toString();
-    }
-  }
-
-  set winnerEntry(value: string | null) {
-    if (value === null) {
-      this.unset("winnerEntry");
-    } else {
-      this.set("winnerEntry", Value.fromString(value as string));
-    }
-  }
-
-  get entryIds(): Array<string> {
-    let value = this.get("entryIds");
-    return value.toStringArray();
-  }
-
-  set entryIds(value: Array<string>) {
-    this.set("entryIds", Value.fromStringArray(value));
-  }
-
-  get entries(): Array<string> {
-    let value = this.get("entries");
-    return value.toStringArray();
-  }
-
-  set entries(value: Array<string>) {
-    this.set("entries", Value.fromStringArray(value));
-  }
-
-  get entriesCount(): BigInt {
-    let value = this.get("entriesCount");
+  get playersCount(): BigInt {
+    let value = this.get("playersCount");
     return value.toBigInt();
   }
 
-  set entriesCount(value: BigInt) {
-    this.set("entriesCount", Value.fromBigInt(value));
+  set playersCount(value: BigInt) {
+    this.set("playersCount", Value.fromBigInt(value));
   }
 }
 
@@ -339,21 +307,58 @@ export class Player extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get entries(): Array<string> | null {
-    let value = this.get("entries");
-    if (value === null) {
-      return null;
-    } else {
-      return value.toStringArray();
-    }
+  get address(): Bytes {
+    let value = this.get("address");
+    return value.toBytes();
   }
 
-  set entries(value: Array<string> | null) {
-    if (value === null) {
-      this.unset("entries");
-    } else {
-      this.set("entries", Value.fromStringArray(value as Array<string>));
-    }
+  set address(value: Bytes) {
+    this.set("address", Value.fromBytes(value));
+  }
+
+  get poolContract(): string {
+    let value = this.get("poolContract");
+    return value.toString();
+  }
+
+  set poolContract(value: string) {
+    this.set("poolContract", Value.fromString(value));
+  }
+
+  get sponsorshipAndFeeBalance(): BigInt {
+    let value = this.get("sponsorshipAndFeeBalance");
+    return value.toBigInt();
+  }
+
+  set sponsorshipAndFeeBalance(value: BigInt) {
+    this.set("sponsorshipAndFeeBalance", Value.fromBigInt(value));
+  }
+
+  get consolidatedBalance(): BigInt {
+    let value = this.get("consolidatedBalance");
+    return value.toBigInt();
+  }
+
+  set consolidatedBalance(value: BigInt) {
+    this.set("consolidatedBalance", Value.fromBigInt(value));
+  }
+
+  get latestBalance(): BigInt {
+    let value = this.get("latestBalance");
+    return value.toBigInt();
+  }
+
+  set latestBalance(value: BigInt) {
+    this.set("latestBalance", Value.fromBigInt(value));
+  }
+
+  get latestDrawId(): BigInt {
+    let value = this.get("latestDrawId");
+    return value.toBigInt();
+  }
+
+  set latestDrawId(value: BigInt) {
+    this.set("latestDrawId", Value.fromBigInt(value));
   }
 }
 
@@ -412,90 +417,6 @@ export class Admin extends Entity {
 
   set poolContract(value: string) {
     this.set("poolContract", Value.fromString(value));
-  }
-}
-
-export class PlayerEntry extends Entity {
-  constructor(id: string) {
-    super();
-    this.set("id", Value.fromString(id));
-  }
-
-  save(): void {
-    let id = this.get("id");
-    assert(id !== null, "Cannot save PlayerEntry entity without an ID");
-    assert(
-      id.kind == ValueKind.STRING,
-      "Cannot save PlayerEntry entity with non-string ID. " +
-        'Considering using .toHex() to convert the "id" to a string.'
-    );
-    store.set("PlayerEntry", id.toString(), this);
-  }
-
-  static load(id: string): PlayerEntry | null {
-    return store.get("PlayerEntry", id) as PlayerEntry | null;
-  }
-
-  get id(): string {
-    let value = this.get("id");
-    return value.toString();
-  }
-
-  set id(value: string) {
-    this.set("id", Value.fromString(value));
-  }
-
-  get drawId(): BigInt {
-    let value = this.get("drawId");
-    return value.toBigInt();
-  }
-
-  set drawId(value: BigInt) {
-    this.set("drawId", Value.fromBigInt(value));
-  }
-
-  get draw(): string {
-    let value = this.get("draw");
-    return value.toString();
-  }
-
-  set draw(value: string) {
-    this.set("draw", Value.fromString(value));
-  }
-
-  get player(): string | null {
-    let value = this.get("player");
-    if (value === null) {
-      return null;
-    } else {
-      return value.toString();
-    }
-  }
-
-  set player(value: string | null) {
-    if (value === null) {
-      this.unset("player");
-    } else {
-      this.set("player", Value.fromString(value as string));
-    }
-  }
-
-  get balance(): BigInt {
-    let value = this.get("balance");
-    return value.toBigInt();
-  }
-
-  set balance(value: BigInt) {
-    this.set("balance", Value.fromBigInt(value));
-  }
-
-  get sponsorshipBalance(): BigInt {
-    let value = this.get("sponsorshipBalance");
-    return value.toBigInt();
-  }
-
-  set sponsorshipBalance(value: BigInt) {
-    this.set("sponsorshipBalance", Value.fromBigInt(value));
   }
 }
 
@@ -562,5 +483,99 @@ export class PoolContract extends Entity {
     } else {
       this.set("drawsCount", Value.fromBigInt(value as BigInt));
     }
+  }
+
+  get openDrawId(): BigInt {
+    let value = this.get("openDrawId");
+    return value.toBigInt();
+  }
+
+  set openDrawId(value: BigInt) {
+    this.set("openDrawId", Value.fromBigInt(value));
+  }
+
+  get committedDrawId(): BigInt {
+    let value = this.get("committedDrawId");
+    return value.toBigInt();
+  }
+
+  set committedDrawId(value: BigInt) {
+    this.set("committedDrawId", Value.fromBigInt(value));
+  }
+
+  get paused(): boolean {
+    let value = this.get("paused");
+    return value.toBoolean();
+  }
+
+  set paused(value: boolean) {
+    this.set("paused", Value.fromBoolean(value));
+  }
+
+  get poolToken(): string {
+    let value = this.get("poolToken");
+    return value.toString();
+  }
+
+  set poolToken(value: string) {
+    this.set("poolToken", Value.fromString(value));
+  }
+}
+
+export class PoolTokenContract extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save PoolTokenContract entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save PoolTokenContract entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("PoolTokenContract", id.toString(), this);
+  }
+
+  static load(id: string): PoolTokenContract | null {
+    return store.get("PoolTokenContract", id) as PoolTokenContract | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get name(): string {
+    let value = this.get("name");
+    return value.toString();
+  }
+
+  set name(value: string) {
+    this.set("name", Value.fromString(value));
+  }
+
+  get symbol(): string {
+    let value = this.get("symbol");
+    return value.toString();
+  }
+
+  set symbol(value: string) {
+    this.set("symbol", Value.fromString(value));
+  }
+
+  get poolContract(): string {
+    let value = this.get("poolContract");
+    return value.toString();
+  }
+
+  set poolContract(value: string) {
+    this.set("poolContract", Value.fromString(value));
   }
 }

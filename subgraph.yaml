@@ -7,112 +7,222 @@ dataSources:
     network: mainnet
     source:
       address: "0xb7896fce748396EcFC240F5a0d3Cc92ca42D7d84"
-      abi: Pool
+      abi: MCDAwarePool
       startBlock: 8480000
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.3
       language: wasm/assemblyscript
       entities:
-        - Draw
-        - Deposited
-        - DepositedAndCommitted
-        - SponsorshipDeposited
         - AdminAdded
         - AdminRemoved
-        - Withdrawn
-        - Opened
         - Committed
-        - Rewarded
-        - NextFeeFractionChanged
+        - CommittedDepositWithdrawn
+        - Deposited
+        - DepositedAndCommitted
+        - FeeCollected
         - NextFeeBeneficiaryChanged
+        - NextFeeFractionChanged
+        - OpenDepositWithdrawn
+        - Opened
         - Paused
+        - Rewarded
+        - RolledOver
+        - SponsorshipAndFeesWithdrawn
+        - SponsorshipDeposited
         - Unpaused
+        - Withdrawn
       abis:
-        - name: Pool
-          file: ./abis/Pool.json
+        - name: MCDAwarePool
+          file: ./abis/MCDAwarePool.json
       eventHandlers:
-        - event: Deposited(indexed address,uint256)
-          handler: handleDeposited
-        - event: DepositedAndCommitted(indexed address,uint256)
-          handler: handleDepositedAndCommitted
-        - event: SponsorshipDeposited(indexed address,uint256)
-          handler: handleSponsorshipDeposited
         - event: AdminAdded(indexed address)
           handler: handleAdminAdded
         - event: AdminRemoved(indexed address)
           handler: handleAdminRemoved
-        - event: Withdrawn(indexed address,uint256)
-          handler: handleWithdrawn
-        - event: Opened(indexed uint256,indexed address,bytes32,uint256)
-          handler: handleOpened
         - event: Committed(indexed uint256)
           handler: handleCommitted
-        - event: Rewarded(indexed uint256,indexed address,bytes32,uint256,uint256)
-          handler: handleRewarded
-        - event: NextFeeFractionChanged(uint256)
-          handler: handleNextFeeFractionChanged
+        - event: CommittedDepositWithdrawn(indexed address,uint256)
+          handler: handleCommittedDepositWithdrawn
+        - event: Deposited(indexed address,uint256)
+          handler: handleDeposited
+        - event: DepositedAndCommitted(indexed address,uint256)
+          handler: handleDepositedAndCommitted
+        - event: FeeCollected(indexed address,uint256,uint256)
+          handler: handleFeeCollected
         - event: NextFeeBeneficiaryChanged(indexed address)
           handler: handleNextFeeBeneficiaryChanged
+        - event: NextFeeFractionChanged(uint256)
+          handler: handleNextFeeFractionChanged
+        - event: OpenDepositWithdrawn(indexed address,uint256)
+          handler: handleOpenDepositWithdrawn
+        - event: Opened(indexed uint256,indexed address,bytes32,uint256)
+          handler: handleOpened
         - event: Paused(indexed address)
           handler: handlePaused
+        - event: Rewarded(indexed uint256,indexed address,bytes32,uint256,uint256)
+          handler: handleRewarded
+        - event: RolledOver(indexed uint256)
+          handler: handleRolledOver
+        - event: SponsorshipAndFeesWithdrawn(indexed address,uint256)
+          handler: handleSponsorshipAndFeesWithdrawn
+        - event: SponsorshipDeposited(indexed address,uint256)
+          handler: handleSponsorshipDeposited
         - event: Unpaused(indexed address)
           handler: handleUnpaused
-      file: ./src/mapping.ts
+        - event: Withdrawn(indexed address,uint256)
+          handler: handleWithdrawn
+      file: ./src/mappingForMCDAwarePool.ts
   - kind: ethereum/contract
-    name: PoolDai
+    name: PoolSaiToken
     network: mainnet
     source:
-      address: "0x29fe7D60DdF151E5b52e5FAB4f1325da6b2bD958"
-      abi: Pool
+      address: "0xfE6892654CBB05eB73d28DCc1Ff938f59666Fe9f"
+      abi: PoolToken
       startBlock: 9130000
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.3
       language: wasm/assemblyscript
       entities:
-        - Draw
-        - Deposited
-        - DepositedAndCommitted
-        - SponsorshipDeposited
+        - Approval
+        - AuthorizedOperator
+        - Burned
+        - Minted
+        - Redeemed
+        - RevokedOperator
+        - Sent
+        - Transfer
+      abis:
+        - name: PoolToken
+          file: ./abis/PoolToken.json
+      eventHandlers:
+        - event: Approval(indexed address,indexed address,uint256)
+          handler: handleApproval
+        - event: AuthorizedOperator(indexed address,indexed address)
+          handler: handleAuthorizedOperator
+        - event: Burned(indexed address,indexed address,uint256,bytes,bytes)
+          handler: handleBurned
+        - event: Minted(indexed address,indexed address,uint256,bytes,bytes)
+          handler: handleMinted
+        - event: Redeemed(indexed address,indexed address,uint256,bytes,bytes)
+          handler: handleRedeemed
+        - event: RevokedOperator(indexed address,indexed address)
+          handler: handleRevokedOperator
+        - event: Sent(indexed address,indexed address,indexed address,uint256,bytes,bytes)
+          handler: handleSent
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mappingForPoolToken.ts
+  - kind: ethereum/contract
+    name: PoolDai
+    network: mainnet
+    source:
+      address: "0x29fe7D60DdF151E5b52e5FAB4f1325da6b2bD958"
+      abi: MCDAwarePool
+      startBlock: 9130000
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.3
+      language: wasm/assemblyscript
+      entities:
         - AdminAdded
         - AdminRemoved
-        - Withdrawn
-        - Opened
         - Committed
-        - Rewarded
-        - NextFeeFractionChanged
+        - CommittedDepositWithdrawn
+        - Deposited
+        - DepositedAndCommitted
+        - FeeCollected
         - NextFeeBeneficiaryChanged
+        - NextFeeFractionChanged
+        - OpenDepositWithdrawn
+        - Opened
         - Paused
+        - Rewarded
+        - RolledOver
+        - SponsorshipAndFeesWithdrawn
+        - SponsorshipDeposited
         - Unpaused
+        - Withdrawn
       abis:
-        - name: Pool
-          file: ./abis/Pool.json
+        - name: MCDAwarePool
+          file: ./abis/MCDAwarePool.json
       eventHandlers:
-        - event: Deposited(indexed address,uint256)
-          handler: handleDeposited
-        - event: DepositedAndCommitted(indexed address,uint256)
-          handler: handleDepositedAndCommitted
-        - event: SponsorshipDeposited(indexed address,uint256)
-          handler: handleSponsorshipDeposited
         - event: AdminAdded(indexed address)
           handler: handleAdminAdded
         - event: AdminRemoved(indexed address)
           handler: handleAdminRemoved
-        - event: Withdrawn(indexed address,uint256)
-          handler: handleWithdrawn
-        - event: Opened(indexed uint256,indexed address,bytes32,uint256)
-          handler: handleOpened
         - event: Committed(indexed uint256)
           handler: handleCommitted
-        - event: Rewarded(indexed uint256,indexed address,bytes32,uint256,uint256)
-          handler: handleRewarded
-        - event: NextFeeFractionChanged(uint256)
-          handler: handleNextFeeFractionChanged
+        - event: CommittedDepositWithdrawn(indexed address,uint256)
+          handler: handleCommittedDepositWithdrawn
+        - event: Deposited(indexed address,uint256)
+          handler: handleDeposited
+        - event: DepositedAndCommitted(indexed address,uint256)
+          handler: handleDepositedAndCommitted
+        - event: FeeCollected(indexed address,uint256,uint256)
+          handler: handleFeeCollected
         - event: NextFeeBeneficiaryChanged(indexed address)
           handler: handleNextFeeBeneficiaryChanged
+        - event: NextFeeFractionChanged(uint256)
+          handler: handleNextFeeFractionChanged
+        - event: OpenDepositWithdrawn(indexed address,uint256)
+          handler: handleOpenDepositWithdrawn
+        - event: Opened(indexed uint256,indexed address,bytes32,uint256)
+          handler: handleOpened
         - event: Paused(indexed address)
           handler: handlePaused
+        - event: Rewarded(indexed uint256,indexed address,bytes32,uint256,uint256)
+          handler: handleRewarded
+        - event: RolledOver(indexed uint256)
+          handler: handleRolledOver
+        - event: SponsorshipAndFeesWithdrawn(indexed address,uint256)
+          handler: handleSponsorshipAndFeesWithdrawn
+        - event: SponsorshipDeposited(indexed address,uint256)
+          handler: handleSponsorshipDeposited
         - event: Unpaused(indexed address)
           handler: handleUnpaused
-      file: ./src/mapping.ts
+        - event: Withdrawn(indexed address,uint256)
+          handler: handleWithdrawn
+      file: ./src/mappingForMCDAwarePool.ts
+  - kind: ethereum/contract
+    name: PoolDaiToken
+    network: mainnet
+    source:
+      address: "0x49d716DFe60b37379010A75329ae09428f17118d"
+      abi: PoolToken
+      startBlock: 9130000
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.3
+      language: wasm/assemblyscript
+      entities:
+        - Approval
+        - AuthorizedOperator
+        - Burned
+        - Minted
+        - Redeemed
+        - RevokedOperator
+        - Sent
+        - Transfer
+      abis:
+        - name: PoolToken
+          file: ./abis/PoolToken.json
+      eventHandlers:
+        - event: Approval(indexed address,indexed address,uint256)
+          handler: handleApproval
+        - event: AuthorizedOperator(indexed address,indexed address)
+          handler: handleAuthorizedOperator
+        - event: Burned(indexed address,indexed address,uint256,bytes,bytes)
+          handler: handleBurned
+        - event: Minted(indexed address,indexed address,uint256,bytes,bytes)
+          handler: handleMinted
+        - event: Redeemed(indexed address,indexed address,uint256,bytes,bytes)
+          handler: handleRedeemed
+        - event: RevokedOperator(indexed address,indexed address)
+          handler: handleRevokedOperator
+        - event: Sent(indexed address,indexed address,indexed address,uint256,bytes,bytes)
+          handler: handleSent
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mappingForPoolToken.ts

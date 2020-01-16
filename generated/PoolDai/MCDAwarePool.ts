@@ -403,7 +403,7 @@ export class Withdrawn__Params {
   }
 }
 
-export class Pool__getDrawResult {
+export class MCDAwarePool__getDrawResult {
   value0: BigInt;
   value1: Address;
   value2: BigInt;
@@ -447,9 +447,9 @@ export class Pool__getDrawResult {
   }
 }
 
-export class Pool extends SmartContract {
-  static bind(address: Address): Pool {
-    return new Pool("Pool", address);
+export class MCDAwarePool extends SmartContract {
+  static bind(address: Address): MCDAwarePool {
+    return new MCDAwarePool("MCDAwarePool", address);
   }
 
   accountedBalance(): BigInt {
@@ -531,6 +531,21 @@ export class Pool extends SmartContract {
     return CallResult.fromValue(value[0].toAddress());
   }
 
+  canLock(): boolean {
+    let result = super.call("canLock", []);
+
+    return result[0].toBoolean();
+  }
+
+  try_canLock(): CallResult<boolean> {
+    let result = super.tryCall("canLock", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toBoolean());
+  }
+
   committedBalanceOf(_addr: Address): BigInt {
     let result = super.call("committedBalanceOf", [
       EthereumValue.fromAddress(_addr)
@@ -573,6 +588,21 @@ export class Pool extends SmartContract {
 
   try_cooldownDuration(): CallResult<BigInt> {
     let result = super.tryCall("cooldownDuration", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toBigInt());
+  }
+
+  cooldownEndAt(): BigInt {
+    let result = super.call("cooldownEndAt", []);
+
+    return result[0].toBigInt();
+  }
+
+  try_cooldownEndAt(): CallResult<BigInt> {
+    let result = super.tryCall("cooldownEndAt", []);
     if (result.reverted) {
       return new CallResult();
     }
@@ -629,12 +659,12 @@ export class Pool extends SmartContract {
     return CallResult.fromValue(value[0].toBigInt());
   }
 
-  getDraw(_drawId: BigInt): Pool__getDrawResult {
+  getDraw(_drawId: BigInt): MCDAwarePool__getDrawResult {
     let result = super.call("getDraw", [
       EthereumValue.fromUnsignedBigInt(_drawId)
     ]);
 
-    return new Pool__getDrawResult(
+    return new MCDAwarePool__getDrawResult(
       result[0].toBigInt(),
       result[1].toAddress(),
       result[2].toBigInt(),
@@ -646,7 +676,7 @@ export class Pool extends SmartContract {
     );
   }
 
-  try_getDraw(_drawId: BigInt): CallResult<Pool__getDrawResult> {
+  try_getDraw(_drawId: BigInt): CallResult<MCDAwarePool__getDrawResult> {
     let result = super.tryCall("getDraw", [
       EthereumValue.fromUnsignedBigInt(_drawId)
     ]);
@@ -655,7 +685,7 @@ export class Pool extends SmartContract {
     }
     let value = result.value;
     return CallResult.fromValue(
-      new Pool__getDrawResult(
+      new MCDAwarePool__getDrawResult(
         value[0].toBigInt(),
         value[1].toAddress(),
         value[2].toBigInt(),
@@ -706,6 +736,21 @@ export class Pool extends SmartContract {
 
   try_lockDuration(): CallResult<BigInt> {
     let result = super.tryCall("lockDuration", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toBigInt());
+  }
+
+  lockEndAt(): BigInt {
+    let result = super.call("lockEndAt", []);
+
+    return result[0].toBigInt();
+  }
+
+  try_lockEndAt(): CallResult<BigInt> {
+    let result = super.tryCall("lockEndAt", []);
     if (result.reverted) {
       return new CallResult();
     }
@@ -834,6 +879,36 @@ export class Pool extends SmartContract {
     return CallResult.fromValue(value[0].toAddress());
   }
 
+  saiPool(): Address {
+    let result = super.call("saiPool", []);
+
+    return result[0].toAddress();
+  }
+
+  try_saiPool(): CallResult<Address> {
+    let result = super.tryCall("saiPool", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toAddress());
+  }
+
+  scdMcdMigration(): Address {
+    let result = super.call("scdMcdMigration", []);
+
+    return result[0].toAddress();
+  }
+
+  try_scdMcdMigration(): CallResult<Address> {
+    let result = super.tryCall("scdMcdMigration", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toAddress());
+  }
+
   sponsorshipAndFeeBalanceOf(_sender: Address): BigInt {
     let result = super.call("sponsorshipAndFeeBalanceOf", [
       EthereumValue.fromAddress(_sender)
@@ -943,6 +1018,36 @@ export class Pool extends SmartContract {
     }
     let value = result.value;
     return CallResult.fromValue(value[0].toBoolean());
+  }
+
+  saiToken(): Address {
+    let result = super.call("saiToken", []);
+
+    return result[0].toAddress();
+  }
+
+  try_saiToken(): CallResult<Address> {
+    let result = super.tryCall("saiToken", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toAddress());
+  }
+
+  daiToken(): Address {
+    let result = super.call("daiToken", []);
+
+    return result[0].toAddress();
+  }
+
+  try_daiToken(): CallResult<Address> {
+    let result = super.tryCall("daiToken", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toAddress());
   }
 }
 
@@ -1062,56 +1167,6 @@ export class DepositSponsorshipCall__Outputs {
   _call: DepositSponsorshipCall;
 
   constructor(call: DepositSponsorshipCall) {
-    this._call = call;
-  }
-}
-
-export class InitCall extends EthereumCall {
-  get inputs(): InitCall__Inputs {
-    return new InitCall__Inputs(this);
-  }
-
-  get outputs(): InitCall__Outputs {
-    return new InitCall__Outputs(this);
-  }
-}
-
-export class InitCall__Inputs {
-  _call: InitCall;
-
-  constructor(call: InitCall) {
-    this._call = call;
-  }
-
-  get _owner(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-
-  get _cToken(): Address {
-    return this._call.inputValues[1].value.toAddress();
-  }
-
-  get _feeFraction(): BigInt {
-    return this._call.inputValues[2].value.toBigInt();
-  }
-
-  get _feeBeneficiary(): Address {
-    return this._call.inputValues[3].value.toAddress();
-  }
-
-  get _lockDuration(): BigInt {
-    return this._call.inputValues[4].value.toBigInt();
-  }
-
-  get _cooldownDuration(): BigInt {
-    return this._call.inputValues[5].value.toBigInt();
-  }
-}
-
-export class InitCall__Outputs {
-  _call: InitCall;
-
-  constructor(call: InitCall) {
     this._call = call;
   }
 }
@@ -1747,5 +1802,233 @@ export class WithdrawSponsorshipAndFeeCall__Outputs {
 
   constructor(call: WithdrawSponsorshipAndFeeCall) {
     this._call = call;
+  }
+}
+
+export class InitCall extends EthereumCall {
+  get inputs(): InitCall__Inputs {
+    return new InitCall__Inputs(this);
+  }
+
+  get outputs(): InitCall__Outputs {
+    return new InitCall__Outputs(this);
+  }
+}
+
+export class InitCall__Inputs {
+  _call: InitCall;
+
+  constructor(call: InitCall) {
+    this._call = call;
+  }
+
+  get _owner(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get _cToken(): Address {
+    return this._call.inputValues[1].value.toAddress();
+  }
+
+  get _feeFraction(): BigInt {
+    return this._call.inputValues[2].value.toBigInt();
+  }
+
+  get _feeBeneficiary(): Address {
+    return this._call.inputValues[3].value.toAddress();
+  }
+
+  get lockDuration(): BigInt {
+    return this._call.inputValues[4].value.toBigInt();
+  }
+
+  get cooldownDuration(): BigInt {
+    return this._call.inputValues[5].value.toBigInt();
+  }
+}
+
+export class InitCall__Outputs {
+  _call: InitCall;
+
+  constructor(call: InitCall) {
+    this._call = call;
+  }
+}
+
+export class InitMCDAwarePoolCall extends EthereumCall {
+  get inputs(): InitMCDAwarePoolCall__Inputs {
+    return new InitMCDAwarePoolCall__Inputs(this);
+  }
+
+  get outputs(): InitMCDAwarePoolCall__Outputs {
+    return new InitMCDAwarePoolCall__Outputs(this);
+  }
+}
+
+export class InitMCDAwarePoolCall__Inputs {
+  _call: InitMCDAwarePoolCall;
+
+  constructor(call: InitMCDAwarePoolCall) {
+    this._call = call;
+  }
+
+  get lockDuration(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get cooldownDuration(): BigInt {
+    return this._call.inputValues[1].value.toBigInt();
+  }
+}
+
+export class InitMCDAwarePoolCall__Outputs {
+  _call: InitMCDAwarePoolCall;
+
+  constructor(call: InitMCDAwarePoolCall) {
+    this._call = call;
+  }
+}
+
+export class InitMigrationCall extends EthereumCall {
+  get inputs(): InitMigrationCall__Inputs {
+    return new InitMigrationCall__Inputs(this);
+  }
+
+  get outputs(): InitMigrationCall__Outputs {
+    return new InitMigrationCall__Outputs(this);
+  }
+}
+
+export class InitMigrationCall__Inputs {
+  _call: InitMigrationCall;
+
+  constructor(call: InitMigrationCall) {
+    this._call = call;
+  }
+
+  get _scdMcdMigration(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get _saiPool(): Address {
+    return this._call.inputValues[1].value.toAddress();
+  }
+}
+
+export class InitMigrationCall__Outputs {
+  _call: InitMigrationCall;
+
+  constructor(call: InitMigrationCall) {
+    this._call = call;
+  }
+}
+
+export class TokensReceivedCall extends EthereumCall {
+  get inputs(): TokensReceivedCall__Inputs {
+    return new TokensReceivedCall__Inputs(this);
+  }
+
+  get outputs(): TokensReceivedCall__Outputs {
+    return new TokensReceivedCall__Outputs(this);
+  }
+}
+
+export class TokensReceivedCall__Inputs {
+  _call: TokensReceivedCall;
+
+  constructor(call: TokensReceivedCall) {
+    this._call = call;
+  }
+
+  get value0(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get from(): Address {
+    return this._call.inputValues[1].value.toAddress();
+  }
+
+  get value2(): Address {
+    return this._call.inputValues[2].value.toAddress();
+  }
+
+  get amount(): BigInt {
+    return this._call.inputValues[3].value.toBigInt();
+  }
+
+  get value4(): Bytes {
+    return this._call.inputValues[4].value.toBytes();
+  }
+
+  get value5(): Bytes {
+    return this._call.inputValues[5].value.toBytes();
+  }
+}
+
+export class TokensReceivedCall__Outputs {
+  _call: TokensReceivedCall;
+
+  constructor(call: TokensReceivedCall) {
+    this._call = call;
+  }
+}
+
+export class SaiTokenCall extends EthereumCall {
+  get inputs(): SaiTokenCall__Inputs {
+    return new SaiTokenCall__Inputs(this);
+  }
+
+  get outputs(): SaiTokenCall__Outputs {
+    return new SaiTokenCall__Outputs(this);
+  }
+}
+
+export class SaiTokenCall__Inputs {
+  _call: SaiTokenCall;
+
+  constructor(call: SaiTokenCall) {
+    this._call = call;
+  }
+}
+
+export class SaiTokenCall__Outputs {
+  _call: SaiTokenCall;
+
+  constructor(call: SaiTokenCall) {
+    this._call = call;
+  }
+
+  get value0(): Address {
+    return this._call.outputValues[0].value.toAddress();
+  }
+}
+
+export class DaiTokenCall extends EthereumCall {
+  get inputs(): DaiTokenCall__Inputs {
+    return new DaiTokenCall__Inputs(this);
+  }
+
+  get outputs(): DaiTokenCall__Outputs {
+    return new DaiTokenCall__Outputs(this);
+  }
+}
+
+export class DaiTokenCall__Inputs {
+  _call: DaiTokenCall;
+
+  constructor(call: DaiTokenCall) {
+    this._call = call;
+  }
+}
+
+export class DaiTokenCall__Outputs {
+  _call: DaiTokenCall;
+
+  constructor(call: DaiTokenCall) {
+    this._call = call;
+  }
+
+  get value0(): Address {
+    return this._call.outputValues[0].value.toAddress();
   }
 }

@@ -17,23 +17,27 @@ type Draw @entity {
   state: DrawState
   poolContract: PoolContract!
 
-  openedAt: BigInt
-  committedAt: BigInt
-  rewardedAt: BigInt
+  openedAt: BigInt!
+  committedAt: BigInt!
+  rewardedAt: BigInt!
+
+  openedAtBlock: BigInt!
+  committedAtBlock: BigInt!
+  rewardedAtBlock: BigInt!
 
   balance: BigInt
 
-  winnerEntry: PlayerEntry
-
-  entryIds: [String!]!
-  entries: [PlayerEntry!]!
-  entriesCount: BigInt!
+  playersCount: BigInt!
 }
 
 type Player @entity {
   id: ID! 
-
-  entries: [PlayerEntry!] @derivedFrom(field: "player")
+  address: Bytes!
+  poolContract: PoolContract!
+  sponsorshipAndFeeBalance: BigInt!
+  consolidatedBalance: BigInt!
+  latestBalance: BigInt!
+  latestDrawId: BigInt!
 }
 
 type Admin @entity {
@@ -43,18 +47,20 @@ type Admin @entity {
   poolContract: PoolContract!
 }
 
-type PlayerEntry @entity {
-  id: ID!
-  drawId: BigInt!
-  draw: Draw!
-  player: Player
-  balance: BigInt!
-  sponsorshipBalance: BigInt!
-}
-
 type PoolContract @entity {
   id: ID!
   draws: [Draw!]! @derivedFrom(field: "poolContract")
   admins: [Admin!]! @derivedFrom(field: "poolContract")
   drawsCount: BigInt
+  openDrawId: BigInt!
+  committedDrawId: BigInt!
+  paused: Boolean
+  poolToken: PoolTokenContract
+}
+
+type PoolTokenContract @entity {
+  id: ID!
+  name: String!
+  symbol: String!
+  poolContract: PoolContract! @derivedFrom(field: "poolToken")
 }
