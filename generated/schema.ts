@@ -512,13 +512,48 @@ export class PoolContract extends Entity {
     this.set("paused", Value.fromBoolean(value));
   }
 
-  get poolToken(): string {
+  get poolToken(): string | null {
     let value = this.get("poolToken");
-    return value.toString();
+    if (value === null) {
+      return null;
+    } else {
+      return value.toString();
+    }
   }
 
-  set poolToken(value: string) {
-    this.set("poolToken", Value.fromString(value));
+  set poolToken(value: string | null) {
+    if (value === null) {
+      this.unset("poolToken");
+    } else {
+      this.set("poolToken", Value.fromString(value as string));
+    }
+  }
+
+  get openBalance(): BigInt {
+    let value = this.get("openBalance");
+    return value.toBigInt();
+  }
+
+  set openBalance(value: BigInt) {
+    this.set("openBalance", Value.fromBigInt(value));
+  }
+
+  get committedBalance(): BigInt {
+    let value = this.get("committedBalance");
+    return value.toBigInt();
+  }
+
+  set committedBalance(value: BigInt) {
+    this.set("committedBalance", Value.fromBigInt(value));
+  }
+
+  get sponsorshipAndFeeBalance(): BigInt {
+    let value = this.get("sponsorshipAndFeeBalance");
+    return value.toBigInt();
+  }
+
+  set sponsorshipAndFeeBalance(value: BigInt) {
+    this.set("sponsorshipAndFeeBalance", Value.fromBigInt(value));
   }
 }
 

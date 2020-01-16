@@ -56,6 +56,10 @@ type PoolContract @entity {
   committedDrawId: BigInt!
   paused: Boolean
   poolToken: PoolTokenContract
+
+  openBalance: BigInt!
+  committedBalance: BigInt!
+  sponsorshipAndFeeBalance: BigInt!
 }
 
 type PoolTokenContract @entity {

@@ -73,17 +73,16 @@ export function handleCommitted(event: Committed): void {
 export function handleCommittedDepositWithdrawn(
   event: CommittedDepositWithdrawn
 ): void {
-  let player = loadOrCreatePlayer(event.params.sender, event.address)
-  consolidateBalance(player)
-  player.consolidatedBalance = player.consolidatedBalance.minus(event.params.amount)
-  player.save()
 }
 
 export function handleDeposited(event: Deposited): void {
+  let pool = PoolContract.load(event.address.toHex())
+  pool.openBalance = pool.openBalance.plus(event.params.amount)
+  pool.save()
+
   let player = loadOrCreatePlayer(event.params.sender, event.address)
   consolidateBalance(player)
   player.latestBalance = player.latestBalance.plus(event.params.amount)
-  let pool = PoolContract.load(event.address.toHex())
   player.latestDrawId = pool.openDrawId
   player.save()
 }
@@ -91,6 +90,10 @@ export function handleDeposited(event: Deposited): void {
 export function handleDepositedAndCommitted(
   event: DepositedAndCommitted
 ): void {
+  let pool = PoolContract.load(event.address.toHex())
+  pool.committedBalance = pool.committedBalance.plus(event.params.amount)
+  pool.save()
+
   let player = loadOrCreatePlayer(event.params.sender, event.address)
   consolidateBalance(player)
   player.consolidatedBalance = player.consolidatedBalance.plus(event.params.amount)
@@ -98,9 +101,6 @@ export function handleDepositedAndCommitted(
 }
 
 export function handleFeeCollected(event: FeeCollected): void {
-  let player = loadOrCreatePlayer(event.params.sender, event.address)
-  player.sponsorshipAndFeeBalance = player.sponsorshipAndFeeBalance.plus(event.params.amount)
-  player.save()
 }
 
 export function handleNextFeeBeneficiaryChanged(
@@ -112,9 +112,6 @@ export function handleNextFeeFractionChanged(
 ): void {}
 
 export function handleOpenDepositWithdrawn(event: OpenDepositWithdrawn): void {
-  let player = loadOrCreatePlayer(event.params.sender, event.address)
-  player.latestBalance = player.latestBalance.minus(event.params.amount)
-  player.save()
 }
 
 export function handleOpened(event: Opened): void {
@@ -124,6 +121,8 @@ export function handleOpened(event: Opened): void {
   let poolContract = loadOrCreatePoolContract(event.address, false)
   poolContract.drawsCount = poolContract.drawsCount.plus(ONE)
   poolContract.openDrawId = event.params.drawId
+  poolContract.committedBalance = poolContract.committedBalance.plus(poolContract.openBalance)
+  poolContract.openBalance = ZERO
   poolContract.save()
 
   draw.drawId = event.params.drawId
@@ -155,15 +154,14 @@ export function handlePaused(event: Paused): void {
 }
 
 export function handleRewarded(event: Rewarded): void {
+  let pool = PoolContract.load(event.address.toHex())
+  pool.sponsorshipAndFeeBalance = pool.sponsorshipAndFeeBalance.plus(event.params.fee)
+  pool.committedBalance = pool.committedBalance.plus(event.params.winnings)
+  pool.save()
+
   const committedDraw = Draw.load(
     formatDrawEntityId(event.address, event.params.drawId)
   )
-
-  log.error('@@@@@@@@@@@@ handleRewarded for committedDrawId: {}, and winner: {}', [
-    committedDraw.drawId.toString(),
-    // committedDrawId.toHex(),
-    event.params.winner.toHexString()
-  ])
 
   committedDraw.state = 'Rewarded'
   committedDraw.winner = event.params.winner
@@ -174,6 +172,10 @@ export function handleRewarded(event: Rewarded): void {
   committedDraw.rewardedAtBlock = event.block.number
 
   committedDraw.save()
+
+  let player = loadOrCreatePlayer(Address.fromString(committedDraw.feeBeneficiary.toHex()), event.address)
+  player.sponsorshipAndFeeBalance = player.sponsorshipAndFeeBalance.plus(event.params.fee)
+  player.save()
 }
 
 export function handleRolledOver(event: RolledOver): void {
@@ -192,12 +194,13 @@ export function handleRolledOver(event: RolledOver): void {
 export function handleSponsorshipAndFeesWithdrawn(
   event: SponsorshipAndFeesWithdrawn
 ): void {
-  let player = loadOrCreatePlayer(event.params.sender, event.address)
-  player.sponsorshipAndFeeBalance = player.sponsorshipAndFeeBalance.minus(event.params.amount)
-  player.save()
 }
 
 export function handleSponsorshipDeposited(event: SponsorshipDeposited): void {
+  let pool = PoolContract.load(event.address.toHex())
+  pool.sponsorshipAndFeeBalance = pool.sponsorshipAndFeeBalance.plus(event.params.amount)
+  pool.save()
+
   let player = loadOrCreatePlayer(event.params.sender, event.address)
   player.sponsorshipAndFeeBalance = player.sponsorshipAndFeeBalance.plus(event.params.amount)
   player.save()
@@ -211,9 +214,17 @@ export function handleUnpaused(event: Unpaused): void {
 
 export function handleWithdrawn(event: Withdrawn): void {
   let player = loadOrCreatePlayer(event.params.sender, event.address)
-  player.consolidatedBalance = ZERO
-  player.latestBalance = ZERO
+  consolidateBalance(player)
+
+  let pool = PoolContract.load(event.address.toHex())
+  pool.openBalance = pool.openBalance.minus(player.latestBalance)
+  pool.committedBalance = pool.committedBalance.minus(player.consolidatedBalance)
+  pool.sponsorshipAndFeeBalance = pool.sponsorshipAndFeeBalance.minus(player.sponsorshipAndFeeBalance)
+  pool.save()
+
   player.latestDrawId = ZERO
+  player.latestBalance = ZERO
+  player.consolidatedBalance = ZERO
   player.sponsorshipAndFeeBalance = ZERO
   player.save()
 }

@@ -1,5 +1,7 @@
 import { Address } from "@graphprotocol/graph-ts"
+import { log } from '@graphprotocol/graph-ts'
 import {
+  PoolToken,
   Approval,
   AuthorizedOperator,
   Burned,
@@ -29,7 +31,8 @@ export function handleRevokedOperator(event: RevokedOperator): void {}
 export function handleSent(event: Sent): void {
   let saiPoolToken = loadOrCreatePoolTokenContract(event.address)
   if (saiPoolToken) {
-    let saiPlayer = loadOrCreatePlayer(event.params.from, Address.fromString(saiPoolToken.poolContract))
+    let poolToken = PoolToken.bind(event.address)
+    let saiPlayer = loadOrCreatePlayer(event.params.from, poolToken.pool())
     consolidateBalance(saiPlayer)
     saiPlayer.consolidatedBalance = saiPlayer.consolidatedBalance.minus(event.params.amount)
     saiPlayer.save()
