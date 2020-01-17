@@ -159,6 +159,10 @@ export function handleRewarded(event: Rewarded): void {
   pool.committedBalance = pool.committedBalance.plus(event.params.winnings)
   pool.save()
 
+  let winner = loadOrCreatePlayer(event.params.winner, event.address)
+  winner.consolidatedBalance = winner.consolidatedBalance.plus(event.params.winnings)
+  winner.save()
+
   const committedDraw = Draw.load(
     formatDrawEntityId(event.address, event.params.drawId)
   )
