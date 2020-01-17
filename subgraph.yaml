@@ -96,6 +96,8 @@ dataSources:
       abis:
         - name: PoolToken
           file: ./abis/PoolToken.json
+        - name: MCDAwarePool
+          file: ./abis/MCDAwarePool.json
       eventHandlers:
         - event: Approval(indexed address,indexed address,uint256)
           handler: handleApproval
@@ -208,6 +210,8 @@ dataSources:
       abis:
         - name: PoolToken
           file: ./abis/PoolToken.json
+        - name: MCDAwarePool
+          file: ./abis/MCDAwarePool.json
       eventHandlers:
         - event: Approval(indexed address,indexed address,uint256)
           handler: handleApproval

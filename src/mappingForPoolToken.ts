@@ -1,7 +1,7 @@
 import { BigInt, Address } from "@graphprotocol/graph-ts"
 import {
   MCDAwarePool
-} from "../generated/MCDAwarePool"
+} from "../generated/PoolSai/MCDAwarePool"
 import {
   PoolToken,
   Approval,
