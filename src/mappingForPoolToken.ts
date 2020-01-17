@@ -1,4 +1,4 @@
-import { BigInt } from "@graphprotocol/graph-ts"
+import { BigInt, Address } from "@graphprotocol/graph-ts"
 import {
   PoolToken,
   Approval,
@@ -20,6 +20,21 @@ import { hasZeroTickets } from './helpers/hasZeroTickets'
 
 const ONE = BigInt.fromI32(1)
 
+function withdraw(playerAddress: Address, poolAddress: Address, amount: BigInt): void { 
+  let player = loadOrCreatePlayer(playerAddress, poolAddress)
+  consolidateBalance(player)
+
+  let pool = PoolContract.load(poolAddress.toHex())
+  pool.committedBalance = pool.committedBalance.minus(amount)
+  if (!hasZeroTickets(player)) {
+    pool.playersCount = pool.playersCount.minus(ONE)
+  }
+  pool.save()
+
+  player.consolidatedBalance = player.consolidatedBalance.minus(amount)
+  player.save()
+}
+
 export function handleApproval(event: Approval): void {
 }
 
@@ -29,27 +44,18 @@ export function handleBurned(event: Burned): void {}
 
 export function handleMinted(event: Minted): void {}
 
-export function handleRedeemed(event: Redeemed): void {}
+export function handleRedeemed(event: Redeemed): void {
+  loadOrCreatePoolTokenContract(event.address)
+  let poolToken = PoolToken.bind(event.address)
+  withdraw(event.params.from, poolToken.pool(), event.params.amount)
+}
 
 export function handleRevokedOperator(event: RevokedOperator): void {}
 
 export function handleSent(event: Sent): void {
-  let saiPoolToken = loadOrCreatePoolTokenContract(event.address)
-  if (saiPoolToken) {
-    let poolToken = PoolToken.bind(event.address)
-    let saiPlayer = loadOrCreatePlayer(event.params.from, poolToken.pool())
-    consolidateBalance(saiPlayer)
-
-    let pool = PoolContract.load(poolToken.pool().toHex())
-    pool.committedBalance = pool.committedBalance.minus(event.params.amount)
-    if (!hasZeroTickets(saiPlayer)) {
-      pool.playersCount = pool.playersCount.minus(ONE)
-    }
-    pool.save()
-
-    saiPlayer.consolidatedBalance = saiPlayer.consolidatedBalance.minus(event.params.amount)
-    saiPlayer.save()
-  }
+  loadOrCreatePoolTokenContract(event.address)
+  let poolToken = PoolToken.bind(event.address)
+  withdraw(event.params.from, poolToken.pool(), event.params.amount)
 }
 
 export function handleTransfer(event: Transfer): void {}
