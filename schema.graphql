@@ -51,6 +51,7 @@ type PoolContract @entity {
   id: ID!
   draws: [Draw!]! @derivedFrom(field: "poolContract")
   admins: [Admin!]! @derivedFrom(field: "poolContract")
+  players: [Player!]! @derivedFrom(field: "poolContract")
   drawsCount: BigInt
   openDrawId: BigInt!
   committedDrawId: BigInt!

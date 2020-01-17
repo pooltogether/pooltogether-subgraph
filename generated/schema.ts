@@ -468,6 +468,15 @@ export class PoolContract extends Entity {
     this.set("admins", Value.fromStringArray(value));
   }
 
+  get players(): Array<string> {
+    let value = this.get("players");
+    return value.toStringArray();
+  }
+
+  set players(value: Array<string>) {
+    this.set("players", Value.fromStringArray(value));
+  }
+
   get drawsCount(): BigInt | null {
     let value = this.get("drawsCount");
     if (value === null) {
