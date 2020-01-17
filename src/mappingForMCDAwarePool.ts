@@ -28,6 +28,7 @@ import {
 import { loadOrCreatePlayer } from './helpers/loadOrCreatePlayer'
 import { consolidateBalance } from './helpers/consolidateBalance'
 import { loadOrCreatePoolContract } from './helpers/loadOrCreatePoolContract'
+import { hasZeroTickets } from './helpers/hasZeroTickets'
 
 const ZERO = BigInt.fromI32(0)
 const ONE = BigInt.fromI32(1)
@@ -76,12 +77,16 @@ export function handleCommittedDepositWithdrawn(
 }
 
 export function handleDeposited(event: Deposited): void {
-  let pool = PoolContract.load(event.address.toHex())
-  pool.openBalance = pool.openBalance.plus(event.params.amount)
-  pool.save()
-
   let player = loadOrCreatePlayer(event.params.sender, event.address)
   consolidateBalance(player)
+  
+  let pool = PoolContract.load(event.address.toHex())
+  pool.openBalance = pool.openBalance.plus(event.params.amount)
+  if (hasZeroTickets(player)) {
+    pool.playersCount = pool.playersCount.plus(ONE)
+  }
+  pool.save()
+
   player.latestBalance = player.latestBalance.plus(event.params.amount)
   player.latestDrawId = pool.openDrawId
   player.save()
@@ -90,12 +95,16 @@ export function handleDeposited(event: Deposited): void {
 export function handleDepositedAndCommitted(
   event: DepositedAndCommitted
 ): void {
-  let pool = PoolContract.load(event.address.toHex())
-  pool.committedBalance = pool.committedBalance.plus(event.params.amount)
-  pool.save()
-
   let player = loadOrCreatePlayer(event.params.sender, event.address)
   consolidateBalance(player)
+
+  let pool = PoolContract.load(event.address.toHex())
+  pool.committedBalance = pool.committedBalance.plus(event.params.amount)
+  if (hasZeroTickets(player)) {
+    pool.playersCount = pool.playersCount.plus(ONE)
+  }
+  pool.save()
+
   player.consolidatedBalance = player.consolidatedBalance.plus(event.params.amount)
   player.save()
 }
@@ -221,6 +230,9 @@ export function handleWithdrawn(event: Withdrawn): void {
   consolidateBalance(player)
 
   let pool = PoolContract.load(event.address.toHex())
+  if (!hasZeroTickets(player)) {
+    pool.playersCount = pool.playersCount.minus(ONE)
+  }
   pool.openBalance = pool.openBalance.minus(player.latestBalance)
   pool.committedBalance = pool.committedBalance.minus(player.consolidatedBalance)
   pool.sponsorshipAndFeeBalance = pool.sponsorshipAndFeeBalance.minus(player.sponsorshipAndFeeBalance)

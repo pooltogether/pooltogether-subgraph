@@ -61,6 +61,7 @@ type PoolContract @entity {
   openBalance: BigInt!
   committedBalance: BigInt!
   sponsorshipAndFeeBalance: BigInt!
+  playersCount: BigInt!
 }
 
 type PoolTokenContract @entity {

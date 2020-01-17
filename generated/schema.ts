@@ -564,6 +564,15 @@ export class PoolContract extends Entity {
   set sponsorshipAndFeeBalance(value: BigInt) {
     this.set("sponsorshipAndFeeBalance", Value.fromBigInt(value));
   }
+
+  get playersCount(): BigInt {
+    let value = this.get("playersCount");
+    return value.toBigInt();
+  }
+
+  set playersCount(value: BigInt) {
+    this.set("playersCount", Value.fromBigInt(value));
+  }
 }
 
 export class PoolTokenContract extends Entity {

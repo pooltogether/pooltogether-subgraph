@@ -1,3 +1,4 @@
+import { BigInt } from "@graphprotocol/graph-ts"
 import {
   PoolToken,
   Approval,
@@ -15,6 +16,9 @@ import {
 import { loadOrCreatePlayer } from './helpers/loadOrCreatePlayer'
 import { consolidateBalance } from './helpers/consolidateBalance'
 import { loadOrCreatePoolTokenContract } from './helpers/loadOrCreatePoolTokenContract'
+import { hasZeroTickets } from './helpers/hasZeroTickets'
+
+const ONE = BigInt.fromI32(1)
 
 export function handleApproval(event: Approval): void {
 }
@@ -35,12 +39,16 @@ export function handleSent(event: Sent): void {
     let poolToken = PoolToken.bind(event.address)
     let saiPlayer = loadOrCreatePlayer(event.params.from, poolToken.pool())
     consolidateBalance(saiPlayer)
-    saiPlayer.consolidatedBalance = saiPlayer.consolidatedBalance.minus(event.params.amount)
-    saiPlayer.save()
 
     let pool = PoolContract.load(poolToken.pool().toHex())
     pool.committedBalance = pool.committedBalance.minus(event.params.amount)
+    if (!hasZeroTickets(saiPlayer)) {
+      pool.playersCount = pool.playersCount.minus(ONE)
+    }
     pool.save()
+
+    saiPlayer.consolidatedBalance = saiPlayer.consolidatedBalance.minus(event.params.amount)
+    saiPlayer.save()
   }
 }
 

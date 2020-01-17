@@ -17,6 +17,7 @@ export function loadOrCreatePoolContract(poolAddress: Address, save: boolean = t
     poolContract.openBalance = ZERO
     poolContract.sponsorshipAndFeeBalance = ZERO
     poolContract.paused = false
+    poolContract.playersCount = ZERO
     if (save) {
       poolContract.save()
     }
