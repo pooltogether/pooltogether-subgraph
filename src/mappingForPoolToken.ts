@@ -1,5 +1,3 @@
-import { Address } from "@graphprotocol/graph-ts"
-import { log } from '@graphprotocol/graph-ts'
 import {
   PoolToken,
   Approval,
@@ -11,6 +9,9 @@ import {
   Sent,
   Transfer
 } from "../generated/PoolToken"
+import {
+  PoolContract
+} from '../generated/schema'
 import { loadOrCreatePlayer } from './helpers/loadOrCreatePlayer'
 import { consolidateBalance } from './helpers/consolidateBalance'
 import { loadOrCreatePoolTokenContract } from './helpers/loadOrCreatePoolTokenContract'
@@ -36,6 +37,10 @@ export function handleSent(event: Sent): void {
     consolidateBalance(saiPlayer)
     saiPlayer.consolidatedBalance = saiPlayer.consolidatedBalance.minus(event.params.amount)
     saiPlayer.save()
+
+    let pool = PoolContract.load(poolToken.pool().toHex())
+    pool.committedBalance = pool.committedBalance.minus(event.params.amount)
+    pool.save()
   }
 }
 
