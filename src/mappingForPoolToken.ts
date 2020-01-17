@@ -1,5 +1,8 @@
 import { BigInt, Address } from "@graphprotocol/graph-ts"
 import {
+  MCDAwarePool
+} from "../generated/MCDAwarePool"
+import {
   PoolToken,
   Approval,
   AuthorizedOperator,
@@ -25,7 +28,8 @@ function withdraw(playerAddress: Address, poolAddress: Address, amount: BigInt):
   consolidateBalance(player)
 
   let pool = PoolContract.load(poolAddress.toHex())
-  pool.committedBalance = pool.committedBalance.minus(amount)
+  let poolContract = MCDAwarePool.bind(poolAddress)
+  pool.committedBalance = poolContract.committedSupply()
   if (!hasZeroTickets(player)) {
     pool.playersCount = pool.playersCount.minus(ONE)
   }
@@ -45,9 +49,6 @@ export function handleBurned(event: Burned): void {}
 export function handleMinted(event: Minted): void {}
 
 export function handleRedeemed(event: Redeemed): void {
-  loadOrCreatePoolTokenContract(event.address)
-  let poolToken = PoolToken.bind(event.address)
-  withdraw(event.params.from, poolToken.pool(), event.params.amount)
 }
 
 export function handleRevokedOperator(event: RevokedOperator): void {}
