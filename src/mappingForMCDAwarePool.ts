@@ -135,7 +135,7 @@ export function handleOpened(event: Opened): void {
   poolContract.save()
 
   draw.drawId = event.params.drawId
-  draw.winner = new Bytes(32)
+  draw.winner = Bytes.fromHexString(ZERO_ADDRESS) as Bytes
   draw.entropy = new Bytes(32)
   draw.winnings = ZERO
   draw.fee = ZERO
