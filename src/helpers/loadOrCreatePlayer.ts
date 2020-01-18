@@ -16,7 +16,6 @@ export function loadOrCreatePlayer(playerAddress: Address, poolAddress: Address)
     player = new Player(playerId)
     player.address = playerAddress
     player.consolidatedBalance = ZERO
-    player.sponsorshipAndFeeBalance = ZERO
     player.latestBalance = ZERO
     player.latestDrawId = ZERO
     player.poolContract = poolAddress.toHex()

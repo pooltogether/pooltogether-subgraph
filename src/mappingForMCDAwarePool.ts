@@ -26,12 +26,15 @@ import {
   Admin
 } from '../generated/schema'
 import { loadOrCreatePlayer } from './helpers/loadOrCreatePlayer'
+import { loadOrCreateSponsor } from './helpers/loadOrCreateSponsor'
+import { loadSponsor } from './helpers/loadSponsor'
 import { consolidateBalance } from './helpers/consolidateBalance'
 import { loadOrCreatePoolContract } from './helpers/loadOrCreatePoolContract'
 import { hasZeroTickets } from './helpers/hasZeroTickets'
 
 const ZERO = BigInt.fromI32(0)
 const ONE = BigInt.fromI32(1)
+const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 
 function formatDrawEntityId(poolAddress: Address, drawId: BigInt): string {
   return poolAddress.toHex() + '-' + drawId.toString()
@@ -168,14 +171,13 @@ export function handleRewarded(event: Rewarded): void {
   pool.committedBalance = pool.committedBalance.plus(event.params.winnings)
   pool.save()
 
-  let winner = loadOrCreatePlayer(event.params.winner, event.address)
-  winner.consolidatedBalance = winner.consolidatedBalance.plus(event.params.winnings)
-  winner.save()
+  if (event.params.winner.toHex() != ZERO_ADDRESS) {
+    let winner = loadOrCreatePlayer(event.params.winner, event.address)
+    winner.consolidatedBalance = winner.consolidatedBalance.plus(event.params.winnings)
+    winner.save()
+  }
 
-  const committedDraw = Draw.load(
-    formatDrawEntityId(event.address, event.params.drawId)
-  )
-
+  const committedDraw = Draw.load(formatDrawEntityId(event.address, event.params.drawId))
   committedDraw.state = 'Rewarded'
   committedDraw.winner = event.params.winner
   committedDraw.winnings = event.params.winnings
@@ -183,12 +185,11 @@ export function handleRewarded(event: Rewarded): void {
   committedDraw.entropy = event.params.entropy
   committedDraw.rewardedAt = event.block.timestamp
   committedDraw.rewardedAtBlock = event.block.number
-
   committedDraw.save()
 
-  let player = loadOrCreatePlayer(Address.fromString(committedDraw.feeBeneficiary.toHex()), event.address)
-  player.sponsorshipAndFeeBalance = player.sponsorshipAndFeeBalance.plus(event.params.fee)
-  player.save()
+  let sponsor = loadOrCreateSponsor(Address.fromString(committedDraw.feeBeneficiary.toHex()), event.address)
+  sponsor.sponsorshipAndFeeBalance = sponsor.sponsorshipAndFeeBalance.plus(event.params.fee)
+  sponsor.save()
 }
 
 export function handleRolledOver(event: RolledOver): void {
@@ -214,9 +215,9 @@ export function handleSponsorshipDeposited(event: SponsorshipDeposited): void {
   pool.sponsorshipAndFeeBalance = pool.sponsorshipAndFeeBalance.plus(event.params.amount)
   pool.save()
 
-  let player = loadOrCreatePlayer(event.params.sender, event.address)
-  player.sponsorshipAndFeeBalance = player.sponsorshipAndFeeBalance.plus(event.params.amount)
-  player.save()
+  let sponsor = loadOrCreateSponsor(event.params.sender, event.address)
+  sponsor.sponsorshipAndFeeBalance = sponsor.sponsorshipAndFeeBalance.plus(event.params.amount)
+  sponsor.save()
 }
 
 export function handleUnpaused(event: Unpaused): void {
@@ -229,18 +230,18 @@ export function handleWithdrawn(event: Withdrawn): void {
   let player = loadOrCreatePlayer(event.params.sender, event.address)
   consolidateBalance(player)
 
+  let sponsor = loadSponsor(event.params.sender, event.address)
+
   let pool = PoolContract.load(event.address.toHex())
   if (!hasZeroTickets(player)) {
     pool.playersCount = pool.playersCount.minus(ONE)
+    store.remove('Player', player.id)
   }
   pool.openBalance = pool.openBalance.minus(player.latestBalance)
   pool.committedBalance = pool.committedBalance.minus(player.consolidatedBalance)
-  pool.sponsorshipAndFeeBalance = pool.sponsorshipAndFeeBalance.minus(player.sponsorshipAndFeeBalance)
+  if (sponsor) {
+    pool.sponsorshipAndFeeBalance = pool.sponsorshipAndFeeBalance.minus(sponsor.sponsorshipAndFeeBalance)
+    store.remove('Sponsor', sponsor.id)
+  }
   pool.save()
-
-  player.latestDrawId = ZERO
-  player.latestBalance = ZERO
-  player.consolidatedBalance = ZERO
-  player.sponsorshipAndFeeBalance = ZERO
-  player.save()
 }

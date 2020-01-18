@@ -325,15 +325,6 @@ export class Player extends Entity {
     this.set("poolContract", Value.fromString(value));
   }
 
-  get sponsorshipAndFeeBalance(): BigInt {
-    let value = this.get("sponsorshipAndFeeBalance");
-    return value.toBigInt();
-  }
-
-  set sponsorshipAndFeeBalance(value: BigInt) {
-    this.set("sponsorshipAndFeeBalance", Value.fromBigInt(value));
-  }
-
   get consolidatedBalance(): BigInt {
     let value = this.get("consolidatedBalance");
     return value.toBigInt();
@@ -359,6 +350,64 @@ export class Player extends Entity {
 
   set latestDrawId(value: BigInt) {
     this.set("latestDrawId", Value.fromBigInt(value));
+  }
+}
+
+export class Sponsor extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save Sponsor entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save Sponsor entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("Sponsor", id.toString(), this);
+  }
+
+  static load(id: string): Sponsor | null {
+    return store.get("Sponsor", id) as Sponsor | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get address(): Bytes {
+    let value = this.get("address");
+    return value.toBytes();
+  }
+
+  set address(value: Bytes) {
+    this.set("address", Value.fromBytes(value));
+  }
+
+  get poolContract(): string {
+    let value = this.get("poolContract");
+    return value.toString();
+  }
+
+  set poolContract(value: string) {
+    this.set("poolContract", Value.fromString(value));
+  }
+
+  get sponsorshipAndFeeBalance(): BigInt {
+    let value = this.get("sponsorshipAndFeeBalance");
+    return value.toBigInt();
+  }
+
+  set sponsorshipAndFeeBalance(value: BigInt) {
+    this.set("sponsorshipAndFeeBalance", Value.fromBigInt(value));
   }
 }
 

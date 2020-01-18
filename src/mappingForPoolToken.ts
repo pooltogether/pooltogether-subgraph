@@ -1,4 +1,4 @@
-import { BigInt, Address } from "@graphprotocol/graph-ts"
+import { BigInt, Address, store } from "@graphprotocol/graph-ts"
 import {
   MCDAwarePool
 } from "../generated/PoolSai/MCDAwarePool"
@@ -32,11 +32,12 @@ function withdraw(playerAddress: Address, poolAddress: Address, amount: BigInt):
   pool.committedBalance = poolContract.committedSupply()
   if (!hasZeroTickets(player)) {
     pool.playersCount = pool.playersCount.minus(ONE)
+    store.remove('Player', player.id)
+  } else {
+    player.consolidatedBalance = player.consolidatedBalance.minus(amount)
+    player.save()
   }
   pool.save()
-
-  player.consolidatedBalance = player.consolidatedBalance.minus(amount)
-  player.save()
 }
 
 export function handleApproval(event: Approval): void {
