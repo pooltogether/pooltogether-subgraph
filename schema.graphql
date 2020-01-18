@@ -26,8 +26,6 @@ type Draw @entity {
   rewardedAtBlock: BigInt!
 
   balance: BigInt
-
-  playersCount: BigInt!
 }
 
 type Player @entity {
@@ -35,6 +33,7 @@ type Player @entity {
   address: Bytes!
   poolContract: PoolContract!
   consolidatedBalance: BigInt!
+  firstDepositDrawId: BigInt!
   latestBalance: BigInt!
   latestDrawId: BigInt!
 }
@@ -67,7 +66,6 @@ type PoolContract @entity {
   openBalance: BigInt!
   committedBalance: BigInt!
   sponsorshipAndFeeBalance: BigInt!
-  playersCount: BigInt!
 }
 
 type PoolTokenContract @entity {

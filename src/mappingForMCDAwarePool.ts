@@ -29,6 +29,7 @@ import { loadOrCreatePlayer } from './helpers/loadOrCreatePlayer'
 import { loadOrCreateSponsor } from './helpers/loadOrCreateSponsor'
 import { loadSponsor } from './helpers/loadSponsor'
 import { consolidateBalance } from './helpers/consolidateBalance'
+import { consolidateDrawId } from './helpers/consolidateDrawId'
 import { loadOrCreatePoolContract } from './helpers/loadOrCreatePoolContract'
 import { hasZeroTickets } from './helpers/hasZeroTickets'
 
@@ -85,13 +86,11 @@ export function handleDeposited(event: Deposited): void {
   
   let pool = PoolContract.load(event.address.toHex())
   pool.openBalance = pool.openBalance.plus(event.params.amount)
-  if (hasZeroTickets(player)) {
-    pool.playersCount = pool.playersCount.plus(ONE)
-  }
   pool.save()
 
   player.latestBalance = player.latestBalance.plus(event.params.amount)
   player.latestDrawId = pool.openDrawId
+  consolidateDrawId(player, pool.openDrawId)
   player.save()
 }
 
@@ -103,12 +102,10 @@ export function handleDepositedAndCommitted(
 
   let pool = PoolContract.load(event.address.toHex())
   pool.committedBalance = pool.committedBalance.plus(event.params.amount)
-  if (hasZeroTickets(player)) {
-    pool.playersCount = pool.playersCount.plus(ONE)
-  }
   pool.save()
 
   player.consolidatedBalance = player.consolidatedBalance.plus(event.params.amount)
+  consolidateDrawId(player, pool.committedDrawId)
   player.save()
 }
 
@@ -154,7 +151,6 @@ export function handleOpened(event: Opened): void {
   draw.rewardedAtBlock = ZERO
   draw.poolContract = poolContract.id
   draw.balance = ZERO
-  draw.playersCount = ZERO
   
   draw.save()
 }
@@ -230,18 +226,16 @@ export function handleWithdrawn(event: Withdrawn): void {
   let player = loadOrCreatePlayer(event.params.sender, event.address)
   consolidateBalance(player)
 
-  let sponsor = loadSponsor(event.params.sender, event.address)
-
   let pool = PoolContract.load(event.address.toHex())
-  if (!hasZeroTickets(player)) {
-    pool.playersCount = pool.playersCount.minus(ONE)
-    store.remove('Player', player.id)
-  }
   pool.openBalance = pool.openBalance.minus(player.latestBalance)
   pool.committedBalance = pool.committedBalance.minus(player.consolidatedBalance)
+
+  let sponsor = loadSponsor(event.params.sender, event.address)
   if (sponsor) {
     pool.sponsorshipAndFeeBalance = pool.sponsorshipAndFeeBalance.minus(sponsor.sponsorshipAndFeeBalance)
     store.remove('Sponsor', sponsor.id)
   }
   pool.save()
+
+  store.remove('Player', player.id)
 }

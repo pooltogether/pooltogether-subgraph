@@ -266,15 +266,6 @@ export class Draw extends Entity {
       this.set("balance", Value.fromBigInt(value as BigInt));
     }
   }
-
-  get playersCount(): BigInt {
-    let value = this.get("playersCount");
-    return value.toBigInt();
-  }
-
-  set playersCount(value: BigInt) {
-    this.set("playersCount", Value.fromBigInt(value));
-  }
 }
 
 export class Player extends Entity {
@@ -332,6 +323,15 @@ export class Player extends Entity {
 
   set consolidatedBalance(value: BigInt) {
     this.set("consolidatedBalance", Value.fromBigInt(value));
+  }
+
+  get firstDepositDrawId(): BigInt {
+    let value = this.get("firstDepositDrawId");
+    return value.toBigInt();
+  }
+
+  set firstDepositDrawId(value: BigInt) {
+    this.set("firstDepositDrawId", Value.fromBigInt(value));
   }
 
   get latestBalance(): BigInt {
@@ -612,15 +612,6 @@ export class PoolContract extends Entity {
 
   set sponsorshipAndFeeBalance(value: BigInt) {
     this.set("sponsorshipAndFeeBalance", Value.fromBigInt(value));
-  }
-
-  get playersCount(): BigInt {
-    let value = this.get("playersCount");
-    return value.toBigInt();
-  }
-
-  set playersCount(value: BigInt) {
-    this.set("playersCount", Value.fromBigInt(value));
   }
 }
 

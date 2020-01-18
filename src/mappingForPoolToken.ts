@@ -21,8 +21,6 @@ import { consolidateBalance } from './helpers/consolidateBalance'
 import { loadOrCreatePoolTokenContract } from './helpers/loadOrCreatePoolTokenContract'
 import { hasZeroTickets } from './helpers/hasZeroTickets'
 
-const ONE = BigInt.fromI32(1)
-
 function withdraw(playerAddress: Address, poolAddress: Address, amount: BigInt): void { 
   let player = loadOrCreatePlayer(playerAddress, poolAddress)
   consolidateBalance(player)
@@ -30,14 +28,14 @@ function withdraw(playerAddress: Address, poolAddress: Address, amount: BigInt):
   let pool = PoolContract.load(poolAddress.toHex())
   let poolContract = MCDAwarePool.bind(poolAddress)
   pool.committedBalance = poolContract.committedSupply()
-  if (!hasZeroTickets(player)) {
-    pool.playersCount = pool.playersCount.minus(ONE)
+  pool.save()
+
+  if (hasZeroTickets(player)) {
     store.remove('Player', player.id)
   } else {
     player.consolidatedBalance = player.consolidatedBalance.minus(amount)
     player.save()
   }
-  pool.save()
 }
 
 export function handleApproval(event: Approval): void {

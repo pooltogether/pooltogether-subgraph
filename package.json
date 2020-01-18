@@ -4,6 +4,7 @@
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
+    "auth": "graph auth https://api.thegraph.com/deploy/",
     "create-local": "graph create --node http://127.0.0.1:8020 pooltogether/pooltogether subgraph.local.yaml",
     "remove-local": "graph remove --node http://127.0.0.1:8020 pooltogether/pooltogether subgraph.local.yaml",
     "deploy-local": "graph deploy --node http://127.0.0.1:8020 --ipfs http://localhost:5001 pooltogether/pooltogether-v2-rinkeby subgraph.local.yaml",
