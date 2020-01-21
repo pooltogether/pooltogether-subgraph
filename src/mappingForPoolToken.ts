@@ -31,10 +31,11 @@ function withdraw(playerAddress: Address, poolAddress: Address, amount: BigInt):
   pool.version = pool.version.plus(ONE)
   pool.save()
 
+  player.consolidatedBalance = player.consolidatedBalance.minus(amount)
+
   if (hasZeroTickets(player)) {
     store.remove('Player', player.id)
   } else {
-    player.consolidatedBalance = player.consolidatedBalance.minus(amount)
     player.version = player.version.plus(ONE)
     player.save()
   }
