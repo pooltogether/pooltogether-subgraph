@@ -20,6 +20,7 @@ export function loadOrCreatePlayer(playerAddress: Address, poolAddress: Address)
     player.latestBalance = ZERO
     player.latestDrawId = ZERO
     player.poolContract = poolAddress.toHex()
+    player.version = ZERO
   }
   return player as Player
 }

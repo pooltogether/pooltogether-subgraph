@@ -26,6 +26,8 @@ type Draw @entity {
   rewardedAtBlock: BigInt!
 
   balance: BigInt
+
+  version: BigInt!
 }
 
 type Player @entity {
@@ -36,6 +38,8 @@ type Player @entity {
   firstDepositDrawId: BigInt!
   latestBalance: BigInt!
   latestDrawId: BigInt!
+
+  version: BigInt!
 }
 
 type Sponsor @entity {
@@ -66,6 +70,8 @@ type PoolContract @entity {
   openBalance: BigInt!
   committedBalance: BigInt!
   sponsorshipAndFeeBalance: BigInt!
+
+  version: BigInt!
 }
 
 type PoolTokenContract @entity {

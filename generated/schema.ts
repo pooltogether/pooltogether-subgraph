@@ -266,6 +266,15 @@ export class Draw extends Entity {
       this.set("balance", Value.fromBigInt(value as BigInt));
     }
   }
+
+  get version(): BigInt {
+    let value = this.get("version");
+    return value.toBigInt();
+  }
+
+  set version(value: BigInt) {
+    this.set("version", Value.fromBigInt(value));
+  }
 }
 
 export class Player extends Entity {
@@ -350,6 +359,15 @@ export class Player extends Entity {
 
   set latestDrawId(value: BigInt) {
     this.set("latestDrawId", Value.fromBigInt(value));
+  }
+
+  get version(): BigInt {
+    let value = this.get("version");
+    return value.toBigInt();
+  }
+
+  set version(value: BigInt) {
+    this.set("version", Value.fromBigInt(value));
   }
 }
 
@@ -612,6 +630,15 @@ export class PoolContract extends Entity {
 
   set sponsorshipAndFeeBalance(value: BigInt) {
     this.set("sponsorshipAndFeeBalance", Value.fromBigInt(value));
+  }
+
+  get version(): BigInt {
+    let value = this.get("version");
+    return value.toBigInt();
+  }
+
+  set version(value: BigInt) {
+    this.set("version", Value.fromBigInt(value));
   }
 }
 

@@ -21,7 +21,6 @@ import {
   Withdrawn
 } from "../generated/MCDAwarePool"
 import {
-  PoolContract,
   Draw,
   Admin
 } from '../generated/schema'
@@ -31,7 +30,6 @@ import { loadSponsor } from './helpers/loadSponsor'
 import { consolidateBalance } from './helpers/consolidateBalance'
 import { consolidateDrawId } from './helpers/consolidateDrawId'
 import { loadOrCreatePoolContract } from './helpers/loadOrCreatePoolContract'
-import { hasZeroTickets } from './helpers/hasZeroTickets'
 
 const ZERO = BigInt.fromI32(0)
 const ONE = BigInt.fromI32(1)
@@ -67,11 +65,13 @@ export function handleCommitted(event: Committed): void {
 
   let poolContract = loadOrCreatePoolContract(event.address)
   poolContract.committedDrawId = openDraw.drawId
+  poolContract.version = poolContract.version.plus(ONE)
   poolContract.save()
 
   openDraw.state = 'Committed'
   openDraw.committedAt = event.block.timestamp
   openDraw.committedAtBlock = event.block.number
+  openDraw.version = openDraw.version.plus(ONE)
   openDraw.save()
 }
 
@@ -84,12 +84,14 @@ export function handleDeposited(event: Deposited): void {
   let player = loadOrCreatePlayer(event.params.sender, event.address)
   consolidateBalance(player)
   
-  let pool = PoolContract.load(event.address.toHex())
+  let pool = loadOrCreatePoolContract(event.address)
   pool.openBalance = pool.openBalance.plus(event.params.amount)
+  pool.version = pool.version.plus(ONE)
   pool.save()
 
   player.latestBalance = player.latestBalance.plus(event.params.amount)
   player.latestDrawId = pool.openDrawId
+  player.version = player.version.plus(ONE)
   consolidateDrawId(player, pool.openDrawId)
   player.save()
 }
@@ -100,11 +102,13 @@ export function handleDepositedAndCommitted(
   let player = loadOrCreatePlayer(event.params.sender, event.address)
   consolidateBalance(player)
 
-  let pool = PoolContract.load(event.address.toHex())
+  let pool = loadOrCreatePoolContract(event.address)
   pool.committedBalance = pool.committedBalance.plus(event.params.amount)
+  pool.version = pool.version.plus(ONE)
   pool.save()
 
   player.consolidatedBalance = player.consolidatedBalance.plus(event.params.amount)
+  player.version = player.version.plus(ONE)
   consolidateDrawId(player, pool.committedDrawId)
   player.save()
 }
@@ -132,6 +136,7 @@ export function handleOpened(event: Opened): void {
   poolContract.openDrawId = event.params.drawId
   poolContract.committedBalance = poolContract.committedBalance.plus(poolContract.openBalance)
   poolContract.openBalance = ZERO
+  poolContract.version = poolContract.version.plus(ONE)
   poolContract.save()
 
   draw.drawId = event.params.drawId
@@ -151,6 +156,7 @@ export function handleOpened(event: Opened): void {
   draw.rewardedAtBlock = ZERO
   draw.poolContract = poolContract.id
   draw.balance = ZERO
+  draw.version = ZERO
   
   draw.save()
 }
@@ -158,18 +164,21 @@ export function handleOpened(event: Opened): void {
 export function handlePaused(event: Paused): void {
   let poolContract = loadOrCreatePoolContract(event.address, false)
   poolContract.paused = true
+  poolContract.version = poolContract.version.plus(ONE)
   poolContract.save()
 }
 
 export function handleRewarded(event: Rewarded): void {
-  let pool = PoolContract.load(event.address.toHex())
+  let pool = loadOrCreatePoolContract(event.address)
   pool.sponsorshipAndFeeBalance = pool.sponsorshipAndFeeBalance.plus(event.params.fee)
   pool.committedBalance = pool.committedBalance.plus(event.params.winnings)
+  pool.version = pool.version.plus(ONE)
   pool.save()
 
   if (event.params.winner.toHex() != ZERO_ADDRESS) {
     let winner = loadOrCreatePlayer(event.params.winner, event.address)
     winner.consolidatedBalance = winner.consolidatedBalance.plus(event.params.winnings)
+    winner.version = winner.version.plus(ONE)
     winner.save()
   }
 
@@ -181,6 +190,7 @@ export function handleRewarded(event: Rewarded): void {
   committedDraw.entropy = event.params.entropy
   committedDraw.rewardedAt = event.block.timestamp
   committedDraw.rewardedAtBlock = event.block.number
+  committedDraw.version = committedDraw.version.plus(ONE)
   committedDraw.save()
 
   let sponsor = loadOrCreateSponsor(Address.fromString(committedDraw.feeBeneficiary.toHex()), event.address)
@@ -197,6 +207,7 @@ export function handleRolledOver(event: RolledOver): void {
   committedDraw.entropy = Bytes.fromI32(1) as Bytes
   committedDraw.rewardedAt = event.block.timestamp
   committedDraw.rewardedAtBlock = event.block.number
+  committedDraw.version = committedDraw.version.plus(ONE)
 
   committedDraw.save()
 }
@@ -207,8 +218,9 @@ export function handleSponsorshipAndFeesWithdrawn(
 }
 
 export function handleSponsorshipDeposited(event: SponsorshipDeposited): void {
-  let pool = PoolContract.load(event.address.toHex())
+  let pool = loadOrCreatePoolContract(event.address)
   pool.sponsorshipAndFeeBalance = pool.sponsorshipAndFeeBalance.plus(event.params.amount)
+  pool.version = pool.version.plus(ONE)
   pool.save()
 
   let sponsor = loadOrCreateSponsor(event.params.sender, event.address)
@@ -219,6 +231,7 @@ export function handleSponsorshipDeposited(event: SponsorshipDeposited): void {
 export function handleUnpaused(event: Unpaused): void {
   let poolContract = loadOrCreatePoolContract(event.address, false)
   poolContract.paused = false
+  poolContract.version = poolContract.version.plus(ONE)
   poolContract.save()
 }
 
@@ -226,9 +239,10 @@ export function handleWithdrawn(event: Withdrawn): void {
   let player = loadOrCreatePlayer(event.params.sender, event.address)
   consolidateBalance(player)
 
-  let pool = PoolContract.load(event.address.toHex())
+  let pool = loadOrCreatePoolContract(event.address)
   pool.openBalance = pool.openBalance.minus(player.latestBalance)
   pool.committedBalance = pool.committedBalance.minus(player.consolidatedBalance)
+  pool.version = pool.version.plus(ONE)
 
   let sponsor = loadSponsor(event.params.sender, event.address)
   if (sponsor) {
