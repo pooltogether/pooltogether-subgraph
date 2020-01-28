@@ -230,7 +230,7 @@ dataSources:
         - event: Transfer(indexed address,indexed address,uint256)
           handler: handleTransfer
       file: ./src/mappingForPoolToken.ts
-- kind: ethereum/contract
+  - kind: ethereum/contract
     name: PoolUsdc
     network: mainnet
     source:
