@@ -236,7 +236,7 @@ dataSources:
     source:
       address: "0xa17c2cc8D583985018094e43DA37A46775e2037C"
       abi: MCDAwarePool
-      startBlock: 15540000
+      startBlock: 9130000
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.3
@@ -307,7 +307,7 @@ dataSources:
     source:
       address: "0xE641c54cd0e20c1A19CFb3E45891f42d63D13EF9"
       abi: PoolToken
-      startBlock: 15540000
+      startBlock: 9130000
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.3
