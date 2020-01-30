@@ -234,7 +234,7 @@ dataSources:
     name: PoolUsdc
     network: mainnet
     source:
-      address: "0xa17c2cc8D583985018094e43DA37A46775e2037C"
+      address: "0x0034Ea9808E620A0EF79261c51AF20614B742B24"
       abi: MCDAwarePool
       startBlock: 9130000
     mapping:
@@ -305,7 +305,7 @@ dataSources:
     name: PoolUsdcToken
     network: mainnet
     source:
-      address: "0xE641c54cd0e20c1A19CFb3E45891f42d63D13EF9"
+      address: "0xBD87447F48ad729C5c4b8bcb503e1395F62e8B98"
       abi: PoolToken
       startBlock: 9130000
     mapping:
