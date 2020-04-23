@@ -18,6 +18,7 @@ import { consolidateBalance } from './helpers/consolidateBalance'
 import { loadOrCreatePoolTokenContract } from './helpers/loadOrCreatePoolTokenContract'
 import { hasZeroTickets } from './helpers/hasZeroTickets'
 import { loadOrCreatePoolContract } from "./helpers/loadOrCreatePoolContract"
+import { depositCommitted } from "./helpers/depositCommitted"
 
 const ONE = BigInt.fromI32(1)
 
@@ -50,15 +51,17 @@ export function handleBurned(event: Burned): void {}
 
 export function handleMinted(event: Minted): void {}
 
-export function handleRedeemed(event: Redeemed): void {
-}
+export function handleRedeemed(event: Redeemed): void {}
 
 export function handleRevokedOperator(event: RevokedOperator): void {}
 
 export function handleSent(event: Sent): void {
   loadOrCreatePoolTokenContract(event.address)
   let poolToken = PoolToken.bind(event.address)
-  withdraw(event.params.from, poolToken.pool(), event.params.amount)
+  let poolAddress = poolToken.pool()
+  withdraw(event.params.from, poolAddress, event.params.amount)
+  depositCommitted(event.params.to, poolAddress, event.params.amount)
 }
 
+// only need to track either Sent or Transfer events.  Sent is handled above
 export function handleTransfer(event: Transfer): void {}
