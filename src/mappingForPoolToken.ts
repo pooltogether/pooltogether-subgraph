@@ -1,7 +1,7 @@
 import { BigInt, Address, store } from "@graphprotocol/graph-ts"
 import {
   MCDAwarePool
-} from "../generated/PoolSai/MCDAwarePool"
+} from "../generated/PoolDai/MCDAwarePool"
 import {
   PoolToken,
   Approval,
@@ -12,7 +12,7 @@ import {
   RevokedOperator,
   Sent,
   Transfer
-} from "../generated/PoolToken"
+} from "../generated/PoolDaiToken/PoolToken"
 import { loadOrCreatePlayer } from './helpers/loadOrCreatePlayer'
 import { consolidateBalance } from './helpers/consolidateBalance'
 import { loadOrCreatePoolTokenContract } from './helpers/loadOrCreatePoolTokenContract'

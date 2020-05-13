@@ -11,7 +11,7 @@ dataSources:
       startBlock: 8480000
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.3
+      apiVersion: 0.0.4
       language: wasm/assemblyscript
       entities:
         - AdminAdded
@@ -82,7 +82,7 @@ dataSources:
       startBlock: 9130000
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.3
+      apiVersion: 0.0.4
       language: wasm/assemblyscript
       entities:
         - Approval
@@ -125,7 +125,7 @@ dataSources:
       startBlock: 9130000
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.3
+      apiVersion: 0.0.4
       language: wasm/assemblyscript
       entities:
         - AdminAdded
@@ -196,7 +196,7 @@ dataSources:
       startBlock: 9130000
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.3
+      apiVersion: 0.0.4
       language: wasm/assemblyscript
       entities:
         - Approval
@@ -239,7 +239,7 @@ dataSources:
       startBlock: 9130000
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.3
+      apiVersion: 0.0.4
       language: wasm/assemblyscript
       entities:
         - AdminAdded
@@ -310,7 +310,7 @@ dataSources:
       startBlock: 9130000
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.3
+      apiVersion: 0.0.4
       language: wasm/assemblyscript
       entities:
         - Approval

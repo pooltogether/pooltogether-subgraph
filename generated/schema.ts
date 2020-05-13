@@ -371,6 +371,73 @@ export class Player extends Entity {
   }
 }
 
+export class PodPlayer extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save PodPlayer entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save PodPlayer entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("PodPlayer", id.toString(), this);
+  }
+
+  static load(id: string): PodPlayer | null {
+    return store.get("PodPlayer", id) as PodPlayer | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get address(): Bytes {
+    let value = this.get("address");
+    return value.toBytes();
+  }
+
+  set address(value: Bytes) {
+    this.set("address", Value.fromBytes(value));
+  }
+
+  get pod(): string {
+    let value = this.get("pod");
+    return value.toString();
+  }
+
+  set pod(value: string) {
+    this.set("pod", Value.fromString(value));
+  }
+
+  get podBalance(): BigInt {
+    let value = this.get("podBalance");
+    return value.toBigInt();
+  }
+
+  set podBalance(value: BigInt) {
+    this.set("podBalance", Value.fromBigInt(value));
+  }
+
+  get version(): BigInt {
+    let value = this.get("version");
+    return value.toBigInt();
+  }
+
+  set version(value: BigInt) {
+    this.set("version", Value.fromBigInt(value));
+  }
+}
+
 export class Sponsor extends Entity {
   constructor(id: string) {
     super();
@@ -484,6 +551,73 @@ export class Admin extends Entity {
 
   set poolContract(value: string) {
     this.set("poolContract", Value.fromString(value));
+  }
+}
+
+export class Pod extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save Pod entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save Pod entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("Pod", id.toString(), this);
+  }
+
+  static load(id: string): Pod | null {
+    return store.get("Pod", id) as Pod | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get podPlayers(): Array<string> {
+    let value = this.get("podPlayers");
+    return value.toStringArray();
+  }
+
+  set podPlayers(value: Array<string>) {
+    this.set("podPlayers", Value.fromStringArray(value));
+  }
+
+  get totalSupply(): BigInt {
+    let value = this.get("totalSupply");
+    return value.toBigInt();
+  }
+
+  set totalSupply(value: BigInt) {
+    this.set("totalSupply", Value.fromBigInt(value));
+  }
+
+  get poolContract(): string {
+    let value = this.get("poolContract");
+    return value.toString();
+  }
+
+  set poolContract(value: string) {
+    this.set("poolContract", Value.fromString(value));
+  }
+
+  get version(): BigInt {
+    let value = this.get("version");
+    return value.toBigInt();
+  }
+
+  set version(value: BigInt) {
+    this.set("version", Value.fromBigInt(value));
   }
 }
 

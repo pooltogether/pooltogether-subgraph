@@ -42,6 +42,16 @@ type Player @entity {
   version: BigInt!
 }
 
+type PodPlayer @entity {
+  id: ID! 
+  address: Bytes!
+  pod: Pod!
+
+  podBalance: BigInt!
+
+  version: BigInt!
+}
+
 type Sponsor @entity {
   id: ID! 
   address: Bytes!
@@ -54,6 +64,16 @@ type Admin @entity {
   address: Bytes!
   addedAt: BigInt!
   poolContract: PoolContract!
+}
+
+type Pod @entity {
+  id: ID!
+  podPlayers: [PodPlayer!]! @derivedFrom(field: "pod")
+
+  totalSupply: BigInt!
+  poolContract: PoolContract!
+
+  version: BigInt!
 }
 
 type PoolContract @entity {

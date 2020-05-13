@@ -19,7 +19,7 @@ import {
   SponsorshipDeposited,
   Unpaused,
   Withdrawn
-} from "../generated/MCDAwarePool"
+} from "../generated/PoolDai/MCDAwarePool"
 import {
   Draw,
   Admin

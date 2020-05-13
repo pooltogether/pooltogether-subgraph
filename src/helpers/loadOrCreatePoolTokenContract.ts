@@ -1,7 +1,7 @@
 import { BigInt, Address } from "@graphprotocol/graph-ts"
 import {
   PoolToken
-} from "../../generated/PoolToken"
+} from "../../generated/PoolDaiToken/PoolToken"
 import {
   PoolTokenContract
 } from '../../generated/schema'
