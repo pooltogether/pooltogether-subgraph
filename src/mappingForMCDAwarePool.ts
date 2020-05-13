@@ -226,7 +226,6 @@ export function handleSponsorshipAndFeesWithdrawn(
 export function handleOpenDepositWithdrawn(event: OpenDepositWithdrawn): void {
   let player = loadOrCreatePlayer(event.params.sender, event.address)
   consolidateBalance(player)
-  player.save()
 
   let pool = loadOrCreatePoolContract(event.address)
   pool.openBalance = pool.openBalance.minus(player.latestBalance)
@@ -244,7 +243,6 @@ export function handleOpenDepositWithdrawn(event: OpenDepositWithdrawn): void {
 export function handleCommittedDepositWithdrawn(event: CommittedDepositWithdrawn): void {
   let player = loadOrCreatePlayer(event.params.sender, event.address)
   consolidateBalance(player)
-  player.save()
 
   let pool = loadOrCreatePoolContract(event.address)
   pool.committedBalance = pool.committedBalance.minus(player.consolidatedBalance)
