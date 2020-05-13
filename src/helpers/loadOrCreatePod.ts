@@ -12,7 +12,7 @@ export function loadOrCreatePod(podAddress: Address, poolAddress: Address): Pod 
   if (!pod) {
     pod = new Pod(podId)
     pod.currentExchangeRateMantissa = ZERO
-    pod.totalSupply = ZERO
+    pod.balanceUnderlying = ZERO
     pod.poolContract = poolAddress.toHex()
     pod.version = ZERO
 

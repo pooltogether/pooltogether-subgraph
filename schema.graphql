@@ -73,8 +73,8 @@ type Pod @entity {
   podPlayers: [PodPlayer!]! @derivedFrom(field: "pod")
 
   currentExchangeRateMantissa: BigInt!
-  balanceUnderlying: BigInt! # dai or usdc
-  totalSupply: BigInt! # pod Shared
+  balanceUnderlying: BigInt!
+  totalPendingDeposits: BigInt!
   poolContract: PoolContract!
 
   version: BigInt!

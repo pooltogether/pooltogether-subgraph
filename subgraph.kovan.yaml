@@ -11,7 +11,7 @@ dataSources:
       startBlock: 15540000
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.3
+      apiVersion: 0.0.4
       language: wasm/assemblyscript
       entities:
         - AdminAdded
@@ -82,7 +82,7 @@ dataSources:
       startBlock: 15540000
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.3
+      apiVersion: 0.0.4
       language: wasm/assemblyscript
       entities:
         - Approval
@@ -125,7 +125,7 @@ dataSources:
       startBlock: 15540000
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.3
+      apiVersion: 0.0.4
       language: wasm/assemblyscript
       entities:
         - AdminAdded
@@ -196,7 +196,7 @@ dataSources:
       startBlock: 15540000
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.3
+      apiVersion: 0.0.4
       language: wasm/assemblyscript
       entities:
         - Approval
@@ -231,6 +231,38 @@ dataSources:
           handler: handleTransfer
       file: ./src/mappingForPoolToken.ts
   - kind: ethereum/contract
+    name: DaiPod
+    network: kovan
+    source:
+      address: "0x395fcB67ff8fdf5b9e2AeeCc02Ef7A8DE87a6677"
+      abi: Pod
+      startBlock: 18040000
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - PendingDepositWithdrawn
+        - Redeemed
+        - RedeemedToPool
+        - CollateralizationChanged
+        - Deposited
+      abis:
+        - name: Pod
+          file: ./abis/Pod.json
+      eventHandlers:
+        - event: PendingDepositWithdrawn(indexed address,indexed address,uint256,bytes,bytes)
+          handler: handlePendingDepositWithdrawn
+        - event: Redeemed(indexed address,indexed address,uint256,uint256,bytes,bytes)
+          handler: handleRedeemed
+        - event: RedeemedToPool(indexed address,indexed address,uint256,uint256,bytes,bytes)
+          handler: handleRedeemedToPool
+        - event: CollateralizationChanged(indexed uint256,uint256,uint256,uint256)
+          handler: handleCollateralizationChanged
+        - event: Deposited(indexed address,indexed address,uint256,uint256,bytes,bytes)
+          handler: handleDeposited
+      file: ./src/mappingForPod.ts
+  - kind: ethereum/contract
     name: PoolUsdc
     network: kovan
     source:
@@ -239,7 +271,7 @@ dataSources:
       startBlock: 15540000
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.3
+      apiVersion: 0.0.4
       language: wasm/assemblyscript
       entities:
         - AdminAdded
@@ -310,7 +342,7 @@ dataSources:
       startBlock: 15540000
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.3
+      apiVersion: 0.0.4
       language: wasm/assemblyscript
       entities:
         - Approval
@@ -344,3 +376,35 @@ dataSources:
         - event: Transfer(indexed address,indexed address,uint256)
           handler: handleTransfer
       file: ./src/mappingForPoolToken.ts
+  - kind: ethereum/contract
+    name: UsdcPod
+    network: kovan
+    source:
+      address: "0x9191Fd9f29cbbE73bA0e1B8959eC89Bc780e598b"
+      abi: Pod
+      startBlock: 18040000
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - PendingDepositWithdrawn
+        - Redeemed
+        - RedeemedToPool
+        - CollateralizationChanged
+        - Deposited
+      abis:
+        - name: Pod
+          file: ./abis/Pod.json
+      eventHandlers:
+        - event: PendingDepositWithdrawn(indexed address,indexed address,uint256,bytes,bytes)
+          handler: handlePendingDepositWithdrawn
+        - event: Redeemed(indexed address,indexed address,uint256,uint256,bytes,bytes)
+          handler: handleRedeemed
+        - event: RedeemedToPool(indexed address,indexed address,uint256,uint256,bytes,bytes)
+          handler: handleRedeemedToPool
+        - event: CollateralizationChanged(indexed uint256,uint256,uint256,uint256)
+          handler: handleCollateralizationChanged
+        - event: Deposited(indexed address,indexed address,uint256,uint256,bytes,bytes)
+          handler: handleDeposited
+      file: ./src/mappingForPod.ts

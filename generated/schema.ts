@@ -620,13 +620,22 @@ export class Pod extends Entity {
     this.set("currentExchangeRateMantissa", Value.fromBigInt(value));
   }
 
-  get totalSupply(): BigInt {
-    let value = this.get("totalSupply");
+  get balanceUnderlying(): BigInt {
+    let value = this.get("balanceUnderlying");
     return value.toBigInt();
   }
 
-  set totalSupply(value: BigInt) {
-    this.set("totalSupply", Value.fromBigInt(value));
+  set balanceUnderlying(value: BigInt) {
+    this.set("balanceUnderlying", Value.fromBigInt(value));
+  }
+
+  get totalPendingDeposits(): BigInt {
+    let value = this.get("totalPendingDeposits");
+    return value.toBigInt();
+  }
+
+  set totalPendingDeposits(value: BigInt) {
+    this.set("totalPendingDeposits", Value.fromBigInt(value));
   }
 
   get poolContract(): string {
