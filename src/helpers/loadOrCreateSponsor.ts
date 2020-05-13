@@ -12,11 +12,13 @@ function formatSponsorId(sponsorAddress: Address, poolAddress: Address): string 
 export function loadOrCreateSponsor(sponsorAddress: Address, poolAddress: Address): Sponsor {
   let sponsorId = formatSponsorId(sponsorAddress, poolAddress)
   let sponsor = Sponsor.load(sponsorId)
+
   if (!sponsor) {
     sponsor = new Sponsor(sponsorId)
     sponsor.address = sponsorAddress
     sponsor.sponsorshipAndFeeBalance = ZERO
     sponsor.poolContract = poolAddress.toHex()
   }
+  
   return sponsor as Sponsor
 }

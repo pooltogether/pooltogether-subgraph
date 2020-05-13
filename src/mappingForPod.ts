@@ -1,7 +1,14 @@
 import { BigInt, Address, store } from "@graphprotocol/graph-ts"
 import {
-  Pod
+  // Pod
+  Pod as GeneratedPod
 } from "../generated/DaiPod/Pod"
+import {
+  PodPlayer
+} from '../generated/schema'
+import {
+  Pod
+} from '../generated/schema'
 import {
   PendingDepositWithdrawn,
   Redeemed,
@@ -11,52 +18,68 @@ import {
 } from "../generated/DaiPod/Pod"
 import { loadOrCreatePodPlayer } from './helpers/loadOrCreatePodPlayer'
 import { loadOrCreatePod } from './helpers/loadOrCreatePod'
-// import { consolidateBalance } from './helpers/consolidateBalance'
-// import { loadOrCreatePoolTokenContract } from './helpers/loadOrCreatePoolTokenContract'
-// import { hasZeroTickets } from './helpers/hasZeroTickets'
-// import { loadOrCreatePoolContract } from "./helpers/loadOrCreatePoolContract"
-// import { depositCommitted } from "./helpers/depositCommitted"
 
 const ONE = BigInt.fromI32(1)
 
-// function withdraw(playerAddress: Address, poolAddress: Address, amount: BigInt): void { 
-//   let player = loadOrCreatePlayer(playerAddress, poolAddress)
-//   consolidateBalance(player)
+export function loadPod(podAddress: Address): Pod {
+  let boundPod = GeneratedPod.bind(podAddress)
+  const poolAddress = boundPod.pool()
 
-//   let pool = loadOrCreatePoolContract(poolAddress)
-//   let poolContract = MCDAwarePool.bind(poolAddress)
-//   pool.committedBalance = poolContract.committedSupply()
-//   pool.version = pool.version.plus(ONE)
-//   pool.save()
+  let pod = loadOrCreatePod(podAddress, poolAddress)
+  
+  pod.currentExchangeRateMantissa = boundPod.currentExchangeRateMantissa()
+  pod.version = pod.version.plus(ONE)
+  pod.save()
 
-//   player.consolidatedBalance = player.consolidatedBalance.minus(amount)
+  return pod
+}
 
-//   if (hasZeroTickets(player)) {
-//     store.remove('Player', player.id)
-//   } else {
-//     player.version = player.version.plus(ONE)
-//     player.save()
-//   }
-// }
+export function updatePodPlayer(playerAddress: Address, podPlayer: PodPlayer, boundPod: GeneratedPod): void {
+  podPlayer.balance = boundPod.balanceOf(playerAddress)
+  podPlayer.balanceUnderlying = boundPod.balanceOfUnderlying(playerAddress)
+  podPlayer.pendingDeposit = boundPod.pendingDeposit(playerAddress)
+  podPlayer.version = podPlayer.version.plus(ONE)
 
-// export function handleSent(event: Sent): void {
-//   loadOrCreatePoolTokenContract(event.address)
-//   let poolToken = PoolToken.bind(event.address)
-//   let poolAddress = poolToken.pool()
-//   withdraw(event.params.from, poolAddress, event.params.amount)
-//   depositCommitted(event.params.to, poolAddress, event.params.amount)
-// }
+  podPlayer.save()
+}
 
 export function handlePendingDepositWithdrawn(event: PendingDepositWithdrawn): void {
+  const podAddress = event.address
+  const playerAddress = event.params.from
+  let podPlayer = loadOrCreatePodPlayer(playerAddress, podAddress)
+  let boundPod = GeneratedPod.bind(podAddress)
 
+  let pod = loadPod(podAddress)
+  pod.totalSupply = pod.totalSupply.minus(event.params.collateral)
+  pod.save()
+
+  updatePodPlayer(event.params.from, podPlayer, boundPod)
 }
 
 export function handleRedeemed(event: Redeemed): void {
+  const podAddress = event.address
+  const playerAddress = event.params.from
+  let podPlayer = loadOrCreatePodPlayer(playerAddress, podAddress)
+  let boundPod = GeneratedPod.bind(podAddress)
 
+  let pod = loadPod(podAddress)
+  pod.totalSupply = pod.totalSupply.minus(event.params.collateral)
+  pod.save()
+
+  updatePodPlayer(event.params.from, podPlayer, boundPod)
 }
 
 export function handleRedeemedToPool(event: RedeemedToPool): void {
+  const podAddress = event.address
+  const playerAddress = event.params.from
+  let podPlayer = loadOrCreatePodPlayer(playerAddress, podAddress)
+  let boundPod = GeneratedPod.bind(podAddress)
 
+  let pod = loadPod(podAddress)
+  pod.totalSupply = pod.totalSupply.minus(event.params.collateral)
+  pod.save()
+
+  updatePodPlayer(event.params.from, podPlayer, boundPod)
 }
 
 export function handleCollateralizationChanged(event: CollateralizationChanged): void {
@@ -66,23 +89,12 @@ export function handleCollateralizationChanged(event: CollateralizationChanged):
 export function handleDeposited(event: Deposited): void {
   const podAddress = event.address
   const playerAddress = event.params.from
-
   let podPlayer = loadOrCreatePodPlayer(playerAddress, podAddress)
+  let boundPod = GeneratedPod.bind(podAddress)
 
-  let boundPod = Pod.bind(podAddress)
-  const poolAddress = boundPod.pool()
-
-  let pod = loadOrCreatePod(podAddress, poolAddress)
-  pod.currentExchangeRateMantissa = boundPod.currentExchangeRateMantissa()
-  pod.totalSupply = pod.totalSupply.plus(event.params.collateral)
-  pod.version = pod.version.plus(ONE)
+  let pod = loadPod(podAddress)
+  pod.totalSupply = pod.totalSupply.plus(event.params.collateral) // 180 DAI
   pod.save()
 
-  // podPlayer.podBalance = podPlayer.podBalance.plus(event.params.collateral)
-  podPlayer.balance = boundPod.balanceOf(playerAddress)
-  podPlayer.balanceUnderlying = boundPod.balanceOfUnderlying(playerAddress)
-  podPlayer.pendingDeposit = boundPod.pendingDeposit(playerAddress)
-  podPlayer.version = podPlayer.version.plus(ONE)
-
-  podPlayer.save()
+  updatePodPlayer(event.params.from, podPlayer, boundPod)
 }
