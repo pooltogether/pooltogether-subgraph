@@ -42,8 +42,12 @@ export function updatePodPlayer(playerAddress: Address, podPlayer: PodPlayer, bo
   podPlayer.pendingDeposit = boundPod.pendingDeposit(playerAddress)
   podPlayer.version = podPlayer.version.plus(ONE)
 
-  if (podPlayer.balance.equals(ZERO)) {
+  if (podPlayer.balanceUnderlying.equals(ZERO)) {
     store.remove('PodPlayer', podPlayer.id)
+
+    const pod = Pod.load(podPlayer.pod)
+    pod.podPlayersCount = pod.podPlayersCount.minus(ONE)
+    pod.save()
   } else {
     podPlayer.save()
   }
@@ -52,10 +56,11 @@ export function updatePodPlayer(playerAddress: Address, podPlayer: PodPlayer, bo
 export function handlePendingDepositWithdrawn(event: PendingDepositWithdrawn): void {
   const podAddress = event.address
   const playerAddress = event.params.from
-  let podPlayer = loadOrCreatePodPlayer(playerAddress, podAddress)
+  
+  let pod = loadPod(podAddress)
+  let podPlayer = loadOrCreatePodPlayer(pod, playerAddress)
   let boundPod = GeneratedPod.bind(podAddress)
 
-  let pod = loadPod(podAddress)
   pod.balanceUnderlying = pod.balanceUnderlying.minus(event.params.collateral)
   pod.save()
 
@@ -65,10 +70,11 @@ export function handlePendingDepositWithdrawn(event: PendingDepositWithdrawn): v
 export function handleRedeemed(event: Redeemed): void {
   const podAddress = event.address
   const playerAddress = event.params.from
-  let podPlayer = loadOrCreatePodPlayer(playerAddress, podAddress)
+  
+  let pod = loadPod(podAddress)
+  let podPlayer = loadOrCreatePodPlayer(pod, playerAddress)
   let boundPod = GeneratedPod.bind(podAddress)
 
-  let pod = loadPod(podAddress)
   pod.balanceUnderlying = pod.balanceUnderlying.minus(event.params.collateral)
   pod.save()
 
@@ -78,10 +84,11 @@ export function handleRedeemed(event: Redeemed): void {
 export function handleRedeemedToPool(event: RedeemedToPool): void {
   const podAddress = event.address
   const playerAddress = event.params.from
-  let podPlayer = loadOrCreatePodPlayer(playerAddress, podAddress)
+  
+  let pod = loadPod(podAddress)
+  let podPlayer = loadOrCreatePodPlayer(pod, playerAddress)
   let boundPod = GeneratedPod.bind(podAddress)
 
-  let pod = loadPod(podAddress)
   pod.balanceUnderlying = pod.balanceUnderlying.minus(event.params.collateral)
   pod.save()
 
@@ -95,10 +102,11 @@ export function handleCollateralizationChanged(event: CollateralizationChanged):
 export function handleDeposited(event: Deposited): void {
   const podAddress = event.address
   const playerAddress = event.params.from
-  let podPlayer = loadOrCreatePodPlayer(playerAddress, podAddress)
+  
+  let pod = loadPod(podAddress)
+  let podPlayer = loadOrCreatePodPlayer(pod, playerAddress)
   let boundPod = GeneratedPod.bind(podAddress)
 
-  let pod = loadPod(podAddress)
   pod.balanceUnderlying = pod.balanceUnderlying.plus(event.params.collateral)
   pod.save()
 

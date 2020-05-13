@@ -235,6 +235,8 @@ export function handleOpenDepositWithdrawn(event: OpenDepositWithdrawn): void {
 
   if (hasZeroTickets(player)) {
     store.remove('Player', player.id)
+    pool.playersCount = pool.playersCount.minus(ONE)
+    pool.save()
   } else {
     player.save()
   }
@@ -252,6 +254,8 @@ export function handleCommittedDepositWithdrawn(event: CommittedDepositWithdrawn
 
   if (hasZeroTickets(player)) {
     store.remove('Player', player.id)
+    pool.playersCount = pool.playersCount.minus(ONE)
+    pool.save()
   } else {
     player.save()
   }
@@ -289,8 +293,9 @@ export function handleWithdrawn(event: Withdrawn): void {
     pool.sponsorshipAndFeeBalance = pool.sponsorshipAndFeeBalance.minus(sponsor.sponsorshipAndFeeBalance)
     store.remove('Sponsor', sponsor.id)
   }
-  pool.save()
 
   store.remove('Player', player.id)
+  pool.playersCount = pool.playersCount.minus(ONE)
+  pool.save()
 }
 

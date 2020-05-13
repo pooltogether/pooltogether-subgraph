@@ -42,6 +42,20 @@ type Player @entity {
   version: BigInt!
 }
 
+type Pod @entity {
+  id: ID!
+  address: Bytes!
+  podPlayers: [PodPlayer!]! @derivedFrom(field: "pod")
+  podPlayersCount: BigInt
+
+  currentExchangeRateMantissa: BigInt!
+  balanceUnderlying: BigInt!
+  totalPendingDeposits: BigInt!
+  poolContract: PoolContract!
+
+  version: BigInt!
+}
+
 type PodPlayer @entity {
   id: ID! 
   address: Bytes!
@@ -68,23 +82,12 @@ type Admin @entity {
   poolContract: PoolContract!
 }
 
-type Pod @entity {
-  id: ID!
-  podPlayers: [PodPlayer!]! @derivedFrom(field: "pod")
-
-  currentExchangeRateMantissa: BigInt!
-  balanceUnderlying: BigInt!
-  totalPendingDeposits: BigInt!
-  poolContract: PoolContract!
-
-  version: BigInt!
-}
-
 type PoolContract @entity {
   id: ID!
   draws: [Draw!]! @derivedFrom(field: "poolContract")
   admins: [Admin!]! @derivedFrom(field: "poolContract")
   players: [Player!]! @derivedFrom(field: "poolContract")
+  playersCount: BigInt
   drawsCount: BigInt
   openDrawId: BigInt!
   committedDrawId: BigInt!

@@ -371,6 +371,117 @@ export class Player extends Entity {
   }
 }
 
+export class Pod extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save Pod entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save Pod entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("Pod", id.toString(), this);
+  }
+
+  static load(id: string): Pod | null {
+    return store.get("Pod", id) as Pod | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get address(): Bytes {
+    let value = this.get("address");
+    return value.toBytes();
+  }
+
+  set address(value: Bytes) {
+    this.set("address", Value.fromBytes(value));
+  }
+
+  get podPlayers(): Array<string> {
+    let value = this.get("podPlayers");
+    return value.toStringArray();
+  }
+
+  set podPlayers(value: Array<string>) {
+    this.set("podPlayers", Value.fromStringArray(value));
+  }
+
+  get podPlayersCount(): BigInt | null {
+    let value = this.get("podPlayersCount");
+    if (value === null) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set podPlayersCount(value: BigInt | null) {
+    if (value === null) {
+      this.unset("podPlayersCount");
+    } else {
+      this.set("podPlayersCount", Value.fromBigInt(value as BigInt));
+    }
+  }
+
+  get currentExchangeRateMantissa(): BigInt {
+    let value = this.get("currentExchangeRateMantissa");
+    return value.toBigInt();
+  }
+
+  set currentExchangeRateMantissa(value: BigInt) {
+    this.set("currentExchangeRateMantissa", Value.fromBigInt(value));
+  }
+
+  get balanceUnderlying(): BigInt {
+    let value = this.get("balanceUnderlying");
+    return value.toBigInt();
+  }
+
+  set balanceUnderlying(value: BigInt) {
+    this.set("balanceUnderlying", Value.fromBigInt(value));
+  }
+
+  get totalPendingDeposits(): BigInt {
+    let value = this.get("totalPendingDeposits");
+    return value.toBigInt();
+  }
+
+  set totalPendingDeposits(value: BigInt) {
+    this.set("totalPendingDeposits", Value.fromBigInt(value));
+  }
+
+  get poolContract(): string {
+    let value = this.get("poolContract");
+    return value.toString();
+  }
+
+  set poolContract(value: string) {
+    this.set("poolContract", Value.fromString(value));
+  }
+
+  get version(): BigInt {
+    let value = this.get("version");
+    return value.toBigInt();
+  }
+
+  set version(value: BigInt) {
+    this.set("version", Value.fromBigInt(value));
+  }
+}
+
 export class PodPlayer extends Entity {
   constructor(id: string) {
     super();
@@ -572,91 +683,6 @@ export class Admin extends Entity {
   }
 }
 
-export class Pod extends Entity {
-  constructor(id: string) {
-    super();
-    this.set("id", Value.fromString(id));
-  }
-
-  save(): void {
-    let id = this.get("id");
-    assert(id !== null, "Cannot save Pod entity without an ID");
-    assert(
-      id.kind == ValueKind.STRING,
-      "Cannot save Pod entity with non-string ID. " +
-        'Considering using .toHex() to convert the "id" to a string.'
-    );
-    store.set("Pod", id.toString(), this);
-  }
-
-  static load(id: string): Pod | null {
-    return store.get("Pod", id) as Pod | null;
-  }
-
-  get id(): string {
-    let value = this.get("id");
-    return value.toString();
-  }
-
-  set id(value: string) {
-    this.set("id", Value.fromString(value));
-  }
-
-  get podPlayers(): Array<string> {
-    let value = this.get("podPlayers");
-    return value.toStringArray();
-  }
-
-  set podPlayers(value: Array<string>) {
-    this.set("podPlayers", Value.fromStringArray(value));
-  }
-
-  get currentExchangeRateMantissa(): BigInt {
-    let value = this.get("currentExchangeRateMantissa");
-    return value.toBigInt();
-  }
-
-  set currentExchangeRateMantissa(value: BigInt) {
-    this.set("currentExchangeRateMantissa", Value.fromBigInt(value));
-  }
-
-  get balanceUnderlying(): BigInt {
-    let value = this.get("balanceUnderlying");
-    return value.toBigInt();
-  }
-
-  set balanceUnderlying(value: BigInt) {
-    this.set("balanceUnderlying", Value.fromBigInt(value));
-  }
-
-  get totalPendingDeposits(): BigInt {
-    let value = this.get("totalPendingDeposits");
-    return value.toBigInt();
-  }
-
-  set totalPendingDeposits(value: BigInt) {
-    this.set("totalPendingDeposits", Value.fromBigInt(value));
-  }
-
-  get poolContract(): string {
-    let value = this.get("poolContract");
-    return value.toString();
-  }
-
-  set poolContract(value: string) {
-    this.set("poolContract", Value.fromString(value));
-  }
-
-  get version(): BigInt {
-    let value = this.get("version");
-    return value.toBigInt();
-  }
-
-  set version(value: BigInt) {
-    this.set("version", Value.fromBigInt(value));
-  }
-}
-
 export class PoolContract extends Entity {
   constructor(id: string) {
     super();
@@ -712,6 +738,23 @@ export class PoolContract extends Entity {
 
   set players(value: Array<string>) {
     this.set("players", Value.fromStringArray(value));
+  }
+
+  get playersCount(): BigInt | null {
+    let value = this.get("playersCount");
+    if (value === null) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set playersCount(value: BigInt | null) {
+    if (value === null) {
+      this.unset("playersCount");
+    } else {
+      this.set("playersCount", Value.fromBigInt(value as BigInt));
+    }
   }
 
   get drawsCount(): BigInt | null {
