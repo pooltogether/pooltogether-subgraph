@@ -419,13 +419,31 @@ export class PodPlayer extends Entity {
     this.set("pod", Value.fromString(value));
   }
 
-  get podBalance(): BigInt {
-    let value = this.get("podBalance");
+  get balance(): BigInt {
+    let value = this.get("balance");
     return value.toBigInt();
   }
 
-  set podBalance(value: BigInt) {
-    this.set("podBalance", Value.fromBigInt(value));
+  set balance(value: BigInt) {
+    this.set("balance", Value.fromBigInt(value));
+  }
+
+  get balanceUnderlying(): BigInt {
+    let value = this.get("balanceUnderlying");
+    return value.toBigInt();
+  }
+
+  set balanceUnderlying(value: BigInt) {
+    this.set("balanceUnderlying", Value.fromBigInt(value));
+  }
+
+  get pendingDeposit(): BigInt {
+    let value = this.get("pendingDeposit");
+    return value.toBigInt();
+  }
+
+  set pendingDeposit(value: BigInt) {
+    this.set("pendingDeposit", Value.fromBigInt(value));
   }
 
   get version(): BigInt {
@@ -591,6 +609,15 @@ export class Pod extends Entity {
 
   set podPlayers(value: Array<string>) {
     this.set("podPlayers", Value.fromStringArray(value));
+  }
+
+  get currentExchangeRateMantissa(): BigInt {
+    let value = this.get("currentExchangeRateMantissa");
+    return value.toBigInt();
+  }
+
+  set currentExchangeRateMantissa(value: BigInt) {
+    this.set("currentExchangeRateMantissa", Value.fromBigInt(value));
   }
 
   get totalSupply(): BigInt {

@@ -12,12 +12,16 @@ function formatPlayerId(playerAddress: Address, podAddress: Address): string {
 export function loadOrCreatePodPlayer(playerAddress: Address, podAddress: Address): PodPlayer {
   let podPlayerId = formatPlayerId(playerAddress, podAddress)
   let podPlayer = PodPlayer.load(podPlayerId)
+
   if (!podPlayer) {
     podPlayer = new PodPlayer(podPlayerId)
     podPlayer.address = playerAddress
-    podPlayer.podBalance = ZERO
+    podPlayer.balance = ZERO
+    podPlayer.balanceUnderlying = ZERO
+    podPlayer.pendingDeposit = ZERO
     podPlayer.pod = podAddress.toHex()
     podPlayer.version = ZERO
   }
+
   return podPlayer as PodPlayer
 }

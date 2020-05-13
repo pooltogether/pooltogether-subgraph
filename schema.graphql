@@ -47,7 +47,9 @@ type PodPlayer @entity {
   address: Bytes!
   pod: Pod!
 
-  podBalance: BigInt!
+  balance: BigInt!
+  balanceUnderlying: BigInt!
+  pendingDeposit: BigInt!
 
   version: BigInt!
 }
@@ -70,6 +72,7 @@ type Pod @entity {
   id: ID!
   podPlayers: [PodPlayer!]! @derivedFrom(field: "pod")
 
+  currentExchangeRateMantissa: BigInt!
   totalSupply: BigInt!
   poolContract: PoolContract!
 

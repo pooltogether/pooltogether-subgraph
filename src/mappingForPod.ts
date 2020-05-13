@@ -66,13 +66,23 @@ export function handleCollateralizationChanged(event: CollateralizationChanged):
 export function handleDeposited(event: Deposited): void {
   const podAddress = event.address
   const playerAddress = event.params.from
+
   let podPlayer = loadOrCreatePodPlayer(playerAddress, podAddress)
-  // consolidateBalance(player)
 
   let boundPod = Pod.bind(podAddress)
   const poolAddress = boundPod.pool()
+
   let pod = loadOrCreatePod(podAddress, poolAddress)
+  pod.currentExchangeRateMantissa = boundPod.currentExchangeRateMantissa()
   pod.totalSupply = pod.totalSupply.plus(event.params.collateral)
   pod.version = pod.version.plus(ONE)
   pod.save()
+
+  // podPlayer.podBalance = podPlayer.podBalance.plus(event.params.collateral)
+  podPlayer.balance = boundPod.balanceOf(playerAddress)
+  podPlayer.balanceUnderlying = boundPod.balanceOfUnderlying(playerAddress)
+  podPlayer.pendingDeposit = boundPod.pendingDeposit(playerAddress)
+  podPlayer.version = podPlayer.version.plus(ONE)
+
+  podPlayer.save()
 }
