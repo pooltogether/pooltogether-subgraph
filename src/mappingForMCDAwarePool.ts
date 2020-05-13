@@ -208,55 +208,55 @@ export function handleRolledOver(event: RolledOver): void {
 export function handleSponsorshipAndFeesWithdrawn(
   event: SponsorshipAndFeesWithdrawn
 ): void {
-  // let pool = loadOrCreatePoolContract(event.address)
-  // let sponsor = loadSponsor(event.params.sender, event.address)
+  let pool = loadOrCreatePoolContract(event.address)
+  let sponsor = loadSponsor(event.params.sender, event.address)
 
-  // pool.sponsorshipAndFeeBalance = pool.sponsorshipAndFeeBalance.minus(event.params.amount)
-  // pool.save()
+  pool.sponsorshipAndFeeBalance = pool.sponsorshipAndFeeBalance.minus(event.params.amount)
+  pool.save()
 
-  // if (sponsor) {
-  //   if (sponsor.sponsorshipAndFeeBalance.equals(ZERO)) {
-  //     store.remove('Sponsor', sponsor.id)
-  //   } else {
-  //     sponsor.save()
-  //   }
-  // }
+  if (sponsor) {
+    if (sponsor.sponsorshipAndFeeBalance.equals(ZERO)) {
+      store.remove('Sponsor', sponsor.id)
+    } else {
+      sponsor.save()
+    }
+  }
 }
 
 export function handleOpenDepositWithdrawn(event: OpenDepositWithdrawn): void {
-  // let player = loadOrCreatePlayer(event.params.sender, event.address)
-  // consolidateBalance(player)
-  // player.save()
+  let player = loadOrCreatePlayer(event.params.sender, event.address)
+  consolidateBalance(player)
+  player.save()
 
-  // let pool = loadOrCreatePoolContract(event.address)
-  // pool.openBalance = pool.openBalance.minus(player.latestBalance)
-  // pool.version = pool.version.plus(ONE)
+  let pool = loadOrCreatePoolContract(event.address)
+  pool.openBalance = pool.openBalance.minus(player.latestBalance)
+  pool.version = pool.version.plus(ONE)
 
-  // pool.save()
+  pool.save()
 
-  // if (hasZeroTickets(player)) {
-  //   store.remove('Player', player.id)
-  // } else {
-  //   player.save()
-  // }
+  if (hasZeroTickets(player)) {
+    store.remove('Player', player.id)
+  } else {
+    player.save()
+  }
 }
 
 export function handleCommittedDepositWithdrawn(event: CommittedDepositWithdrawn): void {
-  // let player = loadOrCreatePlayer(event.params.sender, event.address)
-  // consolidateBalance(player)
-  // player.save()
+  let player = loadOrCreatePlayer(event.params.sender, event.address)
+  consolidateBalance(player)
+  player.save()
 
-  // let pool = loadOrCreatePoolContract(event.address)
-  // pool.committedBalance = pool.committedBalance.minus(player.consolidatedBalance)
-  // pool.version = pool.version.plus(ONE)
+  let pool = loadOrCreatePoolContract(event.address)
+  pool.committedBalance = pool.committedBalance.minus(player.consolidatedBalance)
+  pool.version = pool.version.plus(ONE)
 
-  // pool.save()
+  pool.save()
 
-  // if (hasZeroTickets(player)) {
-  //   store.remove('Player', player.id)
-  // } else {
-  //   player.save()
-  // }
+  if (hasZeroTickets(player)) {
+    store.remove('Player', player.id)
+  } else {
+    player.save()
+  }
 }
 
 export function handleSponsorshipDeposited(event: SponsorshipDeposited): void {
