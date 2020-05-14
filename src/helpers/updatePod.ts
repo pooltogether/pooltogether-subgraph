@@ -17,9 +17,10 @@ export function updatePod(pod: Pod, playerAddress: Address, newBalanceUnderlying
 
   pod.totalPendingDeposits = boundPod.totalPendingDeposits()
   pod.currentExchangeRateMantissa = boundPod.currentExchangeRateMantissa()
-  pod.version = pod.version.plus(ONE)
   
   pod.balanceUnderlying = newBalanceUnderlying
+  
+  pod.version = pod.version.plus(ONE)
   pod.save()
 
   updatePodPlayer(podPlayer, boundPod)

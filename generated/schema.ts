@@ -361,6 +361,15 @@ export class Player extends Entity {
     this.set("latestDrawId", Value.fromBigInt(value));
   }
 
+  get winnings(): BigInt {
+    let value = this.get("winnings");
+    return value.toBigInt();
+  }
+
+  set winnings(value: BigInt) {
+    this.set("winnings", Value.fromBigInt(value));
+  }
+
   get version(): BigInt {
     let value = this.get("version");
     return value.toBigInt();
@@ -472,6 +481,15 @@ export class Pod extends Entity {
     this.set("poolContract", Value.fromString(value));
   }
 
+  get winnings(): BigInt {
+    let value = this.get("winnings");
+    return value.toBigInt();
+  }
+
+  set winnings(value: BigInt) {
+    this.set("winnings", Value.fromBigInt(value));
+  }
+
   get version(): BigInt {
     let value = this.get("version");
     return value.toBigInt();
@@ -555,6 +573,15 @@ export class PodPlayer extends Entity {
 
   set pendingDeposit(value: BigInt) {
     this.set("pendingDeposit", Value.fromBigInt(value));
+  }
+
+  get winnings(): BigInt {
+    let value = this.get("winnings");
+    return value.toBigInt();
+  }
+
+  set winnings(value: BigInt) {
+    this.set("winnings", Value.fromBigInt(value));
   }
 
   get version(): BigInt {
@@ -843,6 +870,15 @@ export class PoolContract extends Entity {
 
   set sponsorshipAndFeeBalance(value: BigInt) {
     this.set("sponsorshipAndFeeBalance", Value.fromBigInt(value));
+  }
+
+  get winnings(): BigInt {
+    let value = this.get("winnings");
+    return value.toBigInt();
+  }
+
+  set winnings(value: BigInt) {
+    this.set("winnings", Value.fromBigInt(value));
   }
 
   get version(): BigInt {

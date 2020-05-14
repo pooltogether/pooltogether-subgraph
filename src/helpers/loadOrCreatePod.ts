@@ -18,6 +18,7 @@ export function loadOrCreatePod(podAddress: Address, poolAddress: Address): Pod 
     pod.podPlayersCount = ZERO
     pod.poolContract = poolAddress.toHex()
     pod.version = ZERO
+    pod.winnings = ZERO
 
     pod.save()
   }

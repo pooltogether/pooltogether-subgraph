@@ -1,4 +1,4 @@
-import { BigInt, Bytes, Address, store } from "@graphprotocol/graph-ts"
+import { BigInt, Bytes, Address, log, store } from "@graphprotocol/graph-ts"
 import {
   AdminAdded,
   AdminRemoved,
@@ -20,8 +20,9 @@ import {
   Withdrawn
 } from "../generated/PoolDai/MCDAwarePool"
 import {
+  Admin,
   Draw,
-  Admin
+  Pod,
 } from '../generated/schema'
 import { consolidateBalance } from './helpers/consolidateBalance'
 import { consolidateDrawId } from './helpers/consolidateDrawId'
@@ -30,6 +31,7 @@ import { loadOrCreatePlayer } from './helpers/loadOrCreatePlayer'
 import { loadOrCreateSponsor } from './helpers/loadOrCreateSponsor'
 import { loadSponsor } from './helpers/loadSponsor'
 import { loadOrCreatePoolContract } from './helpers/loadOrCreatePoolContract'
+import { updatePod } from './helpers/updatePod'
 
 const ZERO = BigInt.fromI32(0)
 const ONE = BigInt.fromI32(1)
@@ -164,14 +166,36 @@ export function handleRewarded(event: Rewarded): void {
   let pool = loadOrCreatePoolContract(event.address)
   pool.sponsorshipAndFeeBalance = pool.sponsorshipAndFeeBalance.plus(event.params.fee)
   pool.committedBalance = pool.committedBalance.plus(event.params.winnings)
+  pool.winnings = pool.winnings.plus(event.params.winnings)
   pool.version = pool.version.plus(ONE)
   pool.save()
 
   if (event.params.winner.toHex() != ZERO_ADDRESS) {
     let winner = loadOrCreatePlayer(event.params.winner, event.address)
     winner.consolidatedBalance = winner.consolidatedBalance.plus(event.params.winnings)
+    winner.winnings = winner.winnings.plus(event.params.winnings)
     winner.version = winner.version.plus(ONE)
     winner.save()
+
+    const podId = event.params.winner.toHex()
+    let pod = Pod.load(podId)
+    if (pod) {
+      const newBalanceUnderlying = pod.balanceUnderlying.plus(event.params.winnings)
+      pod.winnings = pod.winnings.plus(event.params.winnings)
+      updatePod(pod as Pod, event.params.winner, newBalanceUnderlying)
+
+      // const podPlayers = pod.podPlayers
+      // const playerAddresses = podPlayers.join(' ')
+      // log.warning('playerAddresses', [playerAddresses])
+      // for (var i = 0; i < podPlayers.length; i++) {
+      //   log.warning('podPlayer', [podPlayers[i]])
+      //   const podPlayer = Pod.load(podPlayers[i])
+      //   const shareOfWinnings = new BigInt(3)
+      //   podPlayer.winnings = podPlayer.winnings.plus(shareOfWinnings)
+      //   podPlayer.version = podPlayer.version.plus(ONE)
+      //   podPlayer.save()
+      // }
+    }
   }
 
   const committedDraw = Draw.load(formatDrawEntityId(event.address, event.params.drawId))
@@ -211,6 +235,7 @@ export function handleSponsorshipAndFeesWithdrawn(
   let sponsor = loadSponsor(event.params.sender, event.address)
 
   pool.sponsorshipAndFeeBalance = pool.sponsorshipAndFeeBalance.minus(event.params.amount)
+  pool.version = pool.version.plus(ONE)
   pool.save()
 
   if (sponsor) {
@@ -228,8 +253,8 @@ export function handleOpenDepositWithdrawn(event: OpenDepositWithdrawn): void {
 
   let pool = loadOrCreatePoolContract(event.address)
   pool.openBalance = pool.openBalance.minus(player.latestBalance)
-  pool.version = pool.version.plus(ONE)
 
+  pool.version = pool.version.plus(ONE)
   pool.save()
 
   if (hasZeroTickets(player)) {
@@ -247,8 +272,8 @@ export function handleCommittedDepositWithdrawn(event: CommittedDepositWithdrawn
 
   let pool = loadOrCreatePoolContract(event.address)
   pool.committedBalance = pool.committedBalance.minus(player.consolidatedBalance)
-  pool.version = pool.version.plus(ONE)
 
+  pool.version = pool.version.plus(ONE)
   pool.save()
 
   if (hasZeroTickets(player)) {
@@ -285,7 +310,6 @@ export function handleWithdrawn(event: Withdrawn): void {
   let pool = loadOrCreatePoolContract(event.address)
   pool.openBalance = pool.openBalance.minus(player.latestBalance)
   pool.committedBalance = pool.committedBalance.minus(player.consolidatedBalance)
-  pool.version = pool.version.plus(ONE)
 
   let sponsor = loadSponsor(event.params.sender, event.address)
   if (sponsor) {
@@ -295,6 +319,7 @@ export function handleWithdrawn(event: Withdrawn): void {
 
   store.remove('Player', player.id)
   pool.playersCount = pool.playersCount.minus(ONE)
+  pool.version = pool.version.plus(ONE)
   pool.save()
 }
 

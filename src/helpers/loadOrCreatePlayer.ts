@@ -23,10 +23,12 @@ export function loadOrCreatePlayer(playerAddress: Address, poolAddress: Address)
     player.latestBalance = ZERO
     player.latestDrawId = ZERO
     player.poolContract = poolAddress.toHex()
+    player.winnings = ZERO
     player.version = ZERO
 
     let poolContract = loadOrCreatePoolContract(poolAddress)
     poolContract.playersCount = poolContract.playersCount.plus(ONE)
+    poolContract.version = poolContract.version.plus(ONE)
     poolContract.save()
   }
 

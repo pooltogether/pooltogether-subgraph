@@ -35,6 +35,8 @@ dataSources:
       abis:
         - name: MCDAwarePool
           file: ./abis/MCDAwarePool.json
+        - name: Pod
+          file: ./abis/Pod.json
       eventHandlers:
         - event: AdminAdded(indexed address)
           handler: handleAdminAdded
@@ -149,6 +151,8 @@ dataSources:
       abis:
         - name: MCDAwarePool
           file: ./abis/MCDAwarePool.json
+        - name: Pod
+          file: ./abis/Pod.json
       eventHandlers:
         - event: AdminAdded(indexed address)
           handler: handleAdminAdded
@@ -297,6 +301,8 @@ dataSources:
       abis:
         - name: MCDAwarePool
           file: ./abis/MCDAwarePool.json
+        - name: Pod
+          file: ./abis/Pod.json
       eventHandlers:
         - event: AdminAdded(indexed address)
           handler: handleAdminAdded

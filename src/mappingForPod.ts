@@ -1,4 +1,4 @@
-import { BigInt, Address, store } from "@graphprotocol/graph-ts"
+import { log, BigInt, Address, store } from "@graphprotocol/graph-ts"
 import {
   Pod as ContractPod
 } from "../generated/DaiPod/Pod"
@@ -15,10 +15,7 @@ import {
 import { loadOrCreatePod } from './helpers/loadOrCreatePod'
 import { updatePod } from './helpers/updatePod'
 
-const ZERO = BigInt.fromI32(0)
-const ONE = BigInt.fromI32(1)
-
-function loadPod(podAddress: Address): Pod {
+function getPod(podAddress: Address): Pod {
   const boundPod = ContractPod.bind(podAddress)
   const poolAddress = boundPod.pool()
 
@@ -29,7 +26,7 @@ function loadPod(podAddress: Address): Pod {
 
 export function handlePendingDepositWithdrawn(event: PendingDepositWithdrawn): void {
   const podAddress = event.address
-  let pod = loadPod(podAddress)
+  let pod = getPod(podAddress)
 
   const newBalanceUnderlying = pod.balanceUnderlying.minus(event.params.collateral)
   updatePod(pod as Pod, event.params.from, newBalanceUnderlying)
@@ -37,7 +34,7 @@ export function handlePendingDepositWithdrawn(event: PendingDepositWithdrawn): v
 
 export function handleRedeemed(event: Redeemed): void {
   const podAddress = event.address
-  let pod = loadPod(podAddress)
+  let pod = getPod(podAddress)
 
   const newBalanceUnderlying = pod.balanceUnderlying.minus(event.params.collateral)
   updatePod(pod as Pod, event.params.from, newBalanceUnderlying)
@@ -45,7 +42,7 @@ export function handleRedeemed(event: Redeemed): void {
 
 export function handleRedeemedToPool(event: RedeemedToPool): void {
   const podAddress = event.address
-  let pod = loadPod(podAddress)
+  let pod = getPod(podAddress)
 
   const newBalanceUnderlying = pod.balanceUnderlying.minus(event.params.collateral)
   updatePod(pod as Pod, event.params.from, newBalanceUnderlying)
@@ -57,7 +54,7 @@ export function handleCollateralizationChanged(event: CollateralizationChanged):
 
 export function handleDeposited(event: Deposited): void {
   const podAddress = event.address
-  let pod = loadPod(podAddress)
+  let pod = getPod(podAddress)
 
   const newBalanceUnderlying = pod.balanceUnderlying.plus(event.params.collateral)
   updatePod(pod as Pod, event.params.from, newBalanceUnderlying)

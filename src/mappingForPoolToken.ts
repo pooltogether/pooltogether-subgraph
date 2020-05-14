@@ -40,6 +40,8 @@ function withdraw(playerAddress: Address, poolAddress: Address, amount: BigInt):
 
   if (hasZeroTickets(player)) {
     store.remove('Player', player.id)
+    pool.playersCount = pool.playersCount.minus(ONE)
+    pool.save()
   } else {
     player.version = player.version.plus(ONE)
     player.save()

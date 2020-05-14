@@ -38,6 +38,7 @@ type Player @entity {
   firstDepositDrawId: BigInt!
   latestBalance: BigInt!
   latestDrawId: BigInt!
+  winnings: BigInt!
 
   version: BigInt!
 }
@@ -53,6 +54,8 @@ type Pod @entity {
   totalPendingDeposits: BigInt!
   poolContract: PoolContract!
 
+  winnings: BigInt!
+
   version: BigInt!
 }
 
@@ -64,6 +67,8 @@ type PodPlayer @entity {
   balance: BigInt!
   balanceUnderlying: BigInt!
   pendingDeposit: BigInt!
+
+  winnings: BigInt!
 
   version: BigInt!
 }
@@ -97,6 +102,7 @@ type PoolContract @entity {
   openBalance: BigInt!
   committedBalance: BigInt!
   sponsorshipAndFeeBalance: BigInt!
+  winnings: BigInt!
 
   version: BigInt!
 }

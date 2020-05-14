@@ -15,15 +15,17 @@ export function updatePodPlayer(podPlayer: PodPlayer, boundPod: ContractPod): vo
   podPlayer.balance = boundPod.balanceOf(playerAddress)
   podPlayer.balanceUnderlying = boundPod.balanceOfUnderlying(playerAddress)
   podPlayer.pendingDeposit = boundPod.pendingDeposit(playerAddress)
-  podPlayer.version = podPlayer.version.plus(ONE)
 
   if (podPlayer.balanceUnderlying.equals(ZERO)) {
     store.remove('PodPlayer', podPlayer.id)
 
     const pod = Pod.load(podPlayer.pod)
     pod.podPlayersCount = pod.podPlayersCount.minus(ONE)
+  
+    pod.version = pod.version.plus(ONE)
     pod.save()
   } else {
+    podPlayer.version = podPlayer.version.plus(ONE)
     podPlayer.save()
   }
 }

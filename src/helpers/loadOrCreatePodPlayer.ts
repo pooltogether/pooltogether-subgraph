@@ -23,9 +23,11 @@ export function loadOrCreatePodPlayer(pod: Pod, playerAddress: Address): PodPlay
     podPlayer.pendingDeposit = ZERO
     podPlayer.pod = pod.address.toHex()
     podPlayer.version = ZERO
+    podPlayer.winnings = ZERO
     podPlayer.save()
 
     pod.podPlayersCount = pod.podPlayersCount.plus(ONE)
+    pod.version = pod.version.plus(ONE)
     pod.save()
   }
 

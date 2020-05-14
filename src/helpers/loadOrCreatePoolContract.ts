@@ -17,6 +17,7 @@ export function loadOrCreatePoolContract(poolAddress: Address, save: boolean = t
     poolContract.committedBalance = ZERO
     poolContract.openBalance = ZERO
     poolContract.sponsorshipAndFeeBalance = ZERO
+    poolContract.winnings = ZERO
     poolContract.playersCount = ZERO
     poolContract.paused = false
     poolContract.version = ZERO
