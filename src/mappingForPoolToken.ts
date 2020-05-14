@@ -1,4 +1,4 @@
-import { BigInt, Address, store } from "@graphprotocol/graph-ts"
+import { BigInt, Address, log, store } from "@graphprotocol/graph-ts"
 import {
   MCDAwarePool
 } from "../generated/PoolDai/MCDAwarePool"

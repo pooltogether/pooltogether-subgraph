@@ -98,6 +98,8 @@ dataSources:
           file: ./abis/PoolToken.json
         - name: MCDAwarePool
           file: ./abis/MCDAwarePool.json
+        - name: Pod
+          file: ./abis/Pod.json
       eventHandlers:
         - event: Approval(indexed address,indexed address,uint256)
           handler: handleApproval
@@ -212,6 +214,8 @@ dataSources:
           file: ./abis/PoolToken.json
         - name: MCDAwarePool
           file: ./abis/MCDAwarePool.json
+        - name: Pod
+          file: ./abis/Pod.json
       eventHandlers:
         - event: Approval(indexed address,indexed address,uint256)
           handler: handleApproval

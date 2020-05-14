@@ -1,5 +1,4 @@
-import { BigInt, Bytes, Address } from "@graphprotocol/graph-ts"
-import { store, log } from '@graphprotocol/graph-ts'
+import { BigInt, Bytes, Address, store } from "@graphprotocol/graph-ts"
 import {
   AdminAdded,
   AdminRemoved,
