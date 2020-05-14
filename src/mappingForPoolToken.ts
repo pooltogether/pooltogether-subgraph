@@ -3,6 +3,9 @@ import {
   MCDAwarePool
 } from "../generated/PoolDai/MCDAwarePool"
 import {
+  Pod
+} from '../generated/schema'
+import {
   PoolToken,
   Approval,
   AuthorizedOperator,
@@ -19,6 +22,7 @@ import { loadOrCreatePoolTokenContract } from './helpers/loadOrCreatePoolTokenCo
 import { hasZeroTickets } from './helpers/hasZeroTickets'
 import { loadOrCreatePoolContract } from "./helpers/loadOrCreatePoolContract"
 import { depositCommitted } from "./helpers/depositCommitted"
+import { updatePod } from './helpers/updatePod'
 
 const ONE = BigInt.fromI32(1)
 
@@ -61,6 +65,13 @@ export function handleSent(event: Sent): void {
   let poolAddress = poolToken.pool()
   withdraw(event.params.from, poolAddress, event.params.amount)
   depositCommitted(event.params.to, poolAddress, event.params.amount)
+
+  const podId = event.params.to.toHex()
+  let pod = Pod.load(podId)
+  if (pod) {
+    const newBalanceUnderlying = pod.balanceUnderlying.plus(event.params.amount)
+    updatePod(pod as Pod, event.params.from, newBalanceUnderlying)
+  }
 }
 
 // only need to track either Sent or Transfer events.  Sent is handled above
