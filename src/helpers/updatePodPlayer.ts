@@ -14,9 +14,14 @@ export function updatePodPlayer(podPlayer: PodPlayer, boundPod: ContractPod): vo
   const playerAddress = Address.fromString(podPlayer.address.toHex())
   podPlayer.balance = boundPod.balanceOf(playerAddress)
   podPlayer.balanceUnderlying = boundPod.balanceOfUnderlying(playerAddress)
-  podPlayer.pendingDeposit = boundPod.pendingDeposit(playerAddress)
 
-  if (podPlayer.balanceUnderlying.equals(ZERO)) {
+  podPlayer.lastDeposit = boundPod.pendingDeposit(playerAddress)
+
+  if (podPlayer.lastDeposit.equals(ZERO)) {
+    podPlayer.lastDepositDrawId = ZERO
+  }
+
+  if (podPlayer.balanceUnderlying.plus(podPlayer.lastDeposit).equals(ZERO)) {
     store.remove('PodPlayer', podPlayer.id)
 
     const pod = Pod.load(podPlayer.pod)

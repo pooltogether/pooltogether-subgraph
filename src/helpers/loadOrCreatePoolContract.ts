@@ -1,5 +1,11 @@
 import { BigInt, Address } from "@graphprotocol/graph-ts"
 import {
+  PoolToken,
+} from '../../generated/PoolDaiToken/PoolToken'
+import {
+  MCDAwarePool,
+} from '../../generated/PoolDai/MCDAwarePool'
+import {
   PoolContract
 } from '../../generated/schema'
 

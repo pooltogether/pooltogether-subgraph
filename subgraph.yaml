@@ -35,6 +35,8 @@ dataSources:
       abis:
         - name: MCDAwarePool
           file: ./abis/MCDAwarePool.json
+        - name: PoolToken
+          file: ./abis/PoolToken.json
       eventHandlers:
         - event: AdminAdded(indexed address)
           handler: handleAdminAdded
@@ -94,10 +96,10 @@ dataSources:
         - Sent
         - Transfer
       abis:
-        - name: PoolToken
-          file: ./abis/PoolToken.json
         - name: MCDAwarePool
           file: ./abis/MCDAwarePool.json
+        - name: PoolToken
+          file: ./abis/PoolToken.json
       eventHandlers:
         - event: Approval(indexed address,indexed address,uint256)
           handler: handleApproval
@@ -149,6 +151,10 @@ dataSources:
       abis:
         - name: MCDAwarePool
           file: ./abis/MCDAwarePool.json
+        - name: Pod
+          file: ./abis/Pod.json
+        - name: PoolToken
+          file: ./abis/PoolToken.json
       eventHandlers:
         - event: AdminAdded(indexed address)
           handler: handleAdminAdded
@@ -208,12 +214,12 @@ dataSources:
         - Sent
         - Transfer
       abis:
-        - name: PoolToken
-          file: ./abis/PoolToken.json
         - name: MCDAwarePool
           file: ./abis/MCDAwarePool.json
         - name: Pod
           file: ./abis/Pod.json
+        - name: PoolToken
+          file: ./abis/PoolToken.json
       eventHandlers:
         - event: Approval(indexed address,indexed address,uint256)
           handler: handleApproval
@@ -297,6 +303,10 @@ dataSources:
       abis:
         - name: MCDAwarePool
           file: ./abis/MCDAwarePool.json
+        - name: Pod
+          file: ./abis/Pod.json
+        - name: PoolToken
+          file: ./abis/PoolToken.json
       eventHandlers:
         - event: AdminAdded(indexed address)
           handler: handleAdminAdded
@@ -356,12 +366,12 @@ dataSources:
         - Sent
         - Transfer
       abis:
-        - name: PoolToken
-          file: ./abis/PoolToken.json
         - name: MCDAwarePool
           file: ./abis/MCDAwarePool.json
         - name: Pod
           file: ./abis/Pod.json
+        - name: PoolToken
+          file: ./abis/PoolToken.json
       eventHandlers:
         - event: Approval(indexed address,indexed address,uint256)
           handler: handleApproval

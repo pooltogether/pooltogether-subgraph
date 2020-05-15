@@ -184,6 +184,9 @@ export function handleRewarded(event: Rewarded): void {
       pod.winnings = pod.winnings.plus(event.params.winnings)
       updatePod(pod as Pod, event.params.winner, newBalanceUnderlying)
 
+      // We are unable to iterate on subgraphs, so this needs to be calculated
+      // another way:
+      //
       // const podPlayers = pod.podPlayers
       // const playerAddresses = podPlayers.join(' ')
       // log.warning('playerAddresses', [playerAddresses])

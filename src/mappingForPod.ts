@@ -3,7 +3,8 @@ import {
   Pod as ContractPod
 } from "../generated/DaiPod/Pod"
 import {
-  Pod
+  CollateralizationEvent,
+  Pod,
 } from '../generated/schema'
 import {
   PendingDepositWithdrawn,
@@ -13,6 +14,7 @@ import {
   Deposited
 } from "../generated/DaiPod/Pod"
 import { loadOrCreatePod } from './helpers/loadOrCreatePod'
+import { loadOrCreatePodPlayer } from './helpers/loadOrCreatePodPlayer'
 import { updatePod } from './helpers/updatePod'
 
 function getPod(podAddress: Address): Pod {
@@ -49,7 +51,18 @@ export function handleRedeemedToPool(event: RedeemedToPool): void {
 }
 
 export function handleCollateralizationChanged(event: CollateralizationChanged): void {
-  // not implemented yet
+  const collateralizationEventId = 'pod-' + event.address.toHex() + '-collateralizationEvent-' + event.params.timestamp.toHex()
+  const collateralizationEvent = new CollateralizationEvent(collateralizationEventId)
+
+  collateralizationEvent.pod = event.address.toHex()
+  collateralizationEvent.block = event.block.number
+  
+  collateralizationEvent.createdAt = event.params.timestamp
+  collateralizationEvent.tokenSupply = event.params.tokens
+  collateralizationEvent.collateral = event.params.collateral
+  collateralizationEvent.exchangeRateMantissa = event.params.mantissa
+
+  collateralizationEvent.save()
 }
 
 export function handleDeposited(event: Deposited): void {
@@ -58,4 +71,9 @@ export function handleDeposited(event: Deposited): void {
 
   const newBalanceUnderlying = pod.balanceUnderlying.plus(event.params.collateral)
   updatePod(pod as Pod, event.params.from, newBalanceUnderlying)
+
+  const podPlayer = loadOrCreatePodPlayer(pod, event.params.from)
+  podPlayer.lastDeposit = event.params.collateral
+  podPlayer.lastDepositDrawId = event.params.drawId
+  podPlayer.save()
 }

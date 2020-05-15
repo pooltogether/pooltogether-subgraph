@@ -20,10 +20,10 @@ export function loadOrCreatePodPlayer(pod: Pod, playerAddress: Address): PodPlay
     podPlayer.address = playerAddress
     podPlayer.balance = ZERO
     podPlayer.balanceUnderlying = ZERO
-    podPlayer.pendingDeposit = ZERO
+    podPlayer.lastDeposit = ZERO
+    podPlayer.lastDepositDrawId = ZERO
     podPlayer.pod = pod.address.toHex()
     podPlayer.version = ZERO
-    podPlayer.winnings = ZERO
     podPlayer.save()
 
     pod.podPlayersCount = pod.podPlayersCount.plus(ONE)
