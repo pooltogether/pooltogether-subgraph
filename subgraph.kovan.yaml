@@ -274,7 +274,7 @@ dataSources:
     name: PoolUsdc
     network: kovan
     source:
-      address: "0xb073a5a16025c91ae3e9764E5cc5fC4DD2fA99Bc"
+      address: "0xa0B2A98d0B769886ec06562ee9bB3572Fa4f3aAb"
       abi: MCDAwarePool
       startBlock: 15540000
     mapping:
